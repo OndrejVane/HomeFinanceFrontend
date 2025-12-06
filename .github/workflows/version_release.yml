@@ -1,0 +1,99 @@
+name: Version Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      releaseType:
+        description: "Typ verze (major, minor, patch)"
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Git setup
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Získat verzi z package.json
+        id: get_version
+        run: |
+          version=$(jq -r .version package.json)
+          echo "current=$version" >> $GITHUB_OUTPUT
+
+      - name: Vypočítat verzi
+        id: calc_version
+        run: |
+          ver="${{ steps.get_version.outputs.current }}"
+
+          IFS='.' read -r major minor patch <<< "${ver%-*}"
+
+          case "${{ inputs.releaseType }}" in
+            major) major=$((major+1)); minor=0; patch=0 ;;
+            minor) minor=$((minor+1)); patch=0 ;;
+            patch) patch=$((patch+1)) ;;
+          esac
+
+          new="${major}.${minor}.${patch}"
+          next="${major}.${minor}.$((patch+1))-next"
+
+          echo "release=$new" >> $GITHUB_OUTPUT
+          echo "next=$next" >> $GITHUB_OUTPUT
+
+      - name: Nastavit release verzi
+        run: |
+          jq ".version = \"${{ steps.calc_version.outputs.release }}\"" package.json > package.tmp.json
+          mv package.tmp.json package.json
+
+      - name: Commit release verze
+        run: |
+          git add package.json
+          git commit -m "Release ${{ steps.calc_version.outputs.release }}"
+
+      - name: Vytvořit git tag
+        run: |
+          git tag -a "v${{ steps.calc_version.outputs.release }}" -m "Release v${{ steps.calc_version.outputs.release }}"
+          git push --follow-tags
+
+      # --- Docker build and push to Docker Hub ---
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ondrejvane/home-finance-frontend:${{ steps.calc_version.outputs.release }} .
+          docker tag ondrejvane/home-finance-frontend:${{ steps.calc_version.outputs.release }} ondrejvane/home-finance-frontend:latest
+
+      - name: Push Docker image
+        run: |
+          docker push ondrejvane/home-finance-frontend:${{ steps.calc_version.outputs.release }}
+          docker push ondrejvane/home-finance-frontend:latest
+
+      - name: Nastavit další vývojovou verzi
+        run: |
+          jq ".version = \"${{ steps.calc_version.outputs.next }}\"" package.json > package.tmp.json
+          mv package.tmp.json package.json
+
+      - name: Commit next verze
+        run: |
+          git add package.json
+          git commit -m "Bump to ${{ steps.calc_version.outputs.next }}"
+          git push
