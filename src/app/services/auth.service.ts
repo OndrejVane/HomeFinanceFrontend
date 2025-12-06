@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { NewUserModel } from '../models/usermodel';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiServerUrl = 'http://localhost:8080/auth';
+  private apiServerUrl = environment.apiUrl + '/auth';
 
   constructor(
     private http: HttpClient,
