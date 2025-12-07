@@ -2,15 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-signup',
-  imports: [RouterLink, ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule, NgIf],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css'
 })
 export class SignupComponent implements OnInit{
-  result:string="";
+
 signupForm = new FormGroup({
     email: new FormControl('', Validators.required), //, Validators.email
     password: new FormControl('', Validators.required),
@@ -31,16 +32,20 @@ signupForm = new FormGroup({
       const lastName = this.signupForm.get('lastName')?.value as string;
       const email = this.signupForm.get('email')?.value as string;
       const password = this.signupForm.get('password')?.value as string;
-      this.authService.new({ firstName, lastName, email, password }).subscribe({
+      this.authService.register({ firstName, lastName, email, password }).subscribe({
         next: (res) => {
-          //console.log(res); 
           this.router.navigate(['/signin']);
         },
+
         error: (err) => {
-          console.error('Signup failed:', err);
+          if (err.status === 409) {
+            this.signupForm.get('email')?.setErrors({emailExists: true});
+          } else {
+            console.log("Došlo k neočekávané chybě. Status code: " + err.status);
+          }
         },
       });
     }
   }
-  
+
 }

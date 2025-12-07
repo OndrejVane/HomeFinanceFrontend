@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { NewUserModel } from '../models/usermodel';
 import { isPlatformBrowser } from '@angular/common';
-import { environment } from '../../environments/environment';
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root',
@@ -74,7 +74,7 @@ export class AuthService {
     });
   }
 
-  new(user: NewUserModel) {
+  register(user: NewUserModel) {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     const body = {
       firstName: user.firstName,

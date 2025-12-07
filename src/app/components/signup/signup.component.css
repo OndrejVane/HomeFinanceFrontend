@@ -5,4 +5,10 @@
     background-position: right center;
     background-size: auto 100%;
     }
-    
+
+.error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
