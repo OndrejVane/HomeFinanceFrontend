@@ -1,5 +1,4 @@
-// environment.ts
 export const environment = {
-  production: false,
+  production: true,
   apiUrl: 'https://backend-from-dockerhub.onrender.com'
 };
