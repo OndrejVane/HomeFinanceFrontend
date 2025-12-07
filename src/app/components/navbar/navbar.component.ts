@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { RouterLink } from '@angular/router';
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: 'app-navbar',
@@ -9,10 +10,11 @@ import { RouterLink } from '@angular/router';
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent {
-logout() {
+  grafanaUrl = environment.grafanaUrl;
 
-  this.authService.logout();
-}
+  logout() {
+    this.authService.logout();
+  }
 /**
  *
  */
