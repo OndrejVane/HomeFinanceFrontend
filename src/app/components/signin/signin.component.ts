@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
+import { version } from '../../../environments/version';
 
 @Component({
   selector: 'app-signin',
@@ -15,6 +16,9 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './signin.component.css',
 })
 export class SigninComponent implements OnInit {
+
+  public version = version;
+
   signinForm = new FormGroup({
     email: new FormControl('', Validators.required), //, Validators.email
     password: new FormControl('', Validators.required),
