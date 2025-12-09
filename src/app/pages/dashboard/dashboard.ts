@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NotificationsWidget } from './components/notificationswidget';
 import { StatsWidget } from './components/statswidget';
 import { RecentSalesWidget } from './components/recentsaleswidget';
 import { BestSellingWidget } from './components/bestsellingwidget';
 import { RevenueStreamWidget } from './components/revenuestreamwidget';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-dashboard',
@@ -22,4 +24,18 @@ import { RevenueStreamWidget } from './components/revenuestreamwidget';
         </div>
     `
 })
-export class Dashboard {}
+export class Dashboard implements OnInit {
+    apiUrl: string = environment.apiUrl;
+    constructor(private http: HttpClient) {}
+
+    ngOnInit(): void {
+        this.http.get(this.apiUrl + '/test').subscribe({
+            next: () => {
+                console.log('/test -> OK');
+            },
+            error: (err) => {
+                console.error('Chyba při GET requestu:', err);
+            }
+        });
+    }
+}
