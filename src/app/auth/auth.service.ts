@@ -29,7 +29,6 @@ export class AuthService {
     refreshToken() {
         return this.http.post(this.apiUrl + '/auth/refresh-token', {}, { withCredentials: true }).pipe(
             tap((res: any) => {
-                console.log("refreshToken inside")
                 this.storage.setAccessToken(res.accessToken);
             })
         );

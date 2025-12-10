@@ -29,12 +29,9 @@ export class Dashboard implements OnInit {
     constructor(private http: HttpClient) {}
 
     ngOnInit(): void {
-        this.http.get(this.apiUrl + '/test').subscribe({
+        this.http.get(this.apiUrl + '/test', { responseType: 'text' }).subscribe({
             next: () => {
                 console.log('/test -> OK');
-            },
-            error: (err) => {
-                console.error('Chyba při GET requestu:', err);
             }
         });
     }

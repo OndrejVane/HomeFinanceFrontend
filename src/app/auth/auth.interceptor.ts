@@ -17,19 +17,15 @@ export class AuthInterceptor implements HttpInterceptor {
     ) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler) {
-        const access = this.storage.getAccessToken();
+        const accessToken = this.storage.getAccessToken();
 
-        const authReq = access
-            ? req.clone({
-                setHeaders: { Authorization: `Bearer ${access}` },
-                withCredentials: true // kvůli refresh endpointu
-            })
-            : req.clone({ withCredentials: true });
+        const authReq = accessToken ? this.addToken(req, accessToken) : req.clone({ withCredentials: true });
 
         return next.handle(authReq).pipe(
             catchError(err => {
-                if (err.status === 401) {
-                    return this.handle401Error(req, next);
+                if (err.status === 401 && !authReq.url.includes("/auth/refresh-token")) {
+                    console.log("Auth token expired -> REFRESH TOKEN")
+                    return this.handle401Error(authReq, next);
                 }
                 return throwError(() => err);
             })
@@ -40,26 +36,17 @@ export class AuthInterceptor implements HttpInterceptor {
         if (!this.isRefreshing) {
             this.isRefreshing = true;
             if (this.auth.isLoggedIn()) {
-                console.log("before refreshToken");
                 return this.auth.refreshToken().pipe(
                     switchMap((res) => {
                         this.isRefreshing = false;
-
                         this.storage.setAccessToken(res.accessToken);
-                        console.log("refreshToken");
-                        const newRequest = request.clone({
-                            setHeaders: {
-                                Authorization: `Bearer ${res.accessToken}`
-                            },
-                            withCredentials: true
-                        });
-                        return next.handle(newRequest);
+                        return next.handle(this.addToken(request, res.accessToken));
                     }),
                     catchError((error) => {
+                        console.log("Refresh token expired -> LOGOUT")
                         this.isRefreshing = false;
-                        console.log("Error catch");
                         this.storage.clear();
-
+                        this.router.navigate(["/login"]);
                         return throwError(() => error);
                     })
                 );
@@ -67,5 +54,14 @@ export class AuthInterceptor implements HttpInterceptor {
         }
 
         return next.handle(request);
+    }
+
+    private addToken(request: HttpRequest<any>, token: string) {
+        return request.clone({
+            setHeaders: {
+                Authorization: `Bearer ${token}`
+            },
+            withCredentials: true
+        });
     }
 }
