@@ -7,6 +7,7 @@ import { Login } from './app/pages/auth/login';
 import { Register } from './app/pages/auth/register';
 import { AuthGuard } from '@/auth/auth.guard';
 import { GuestGuard } from '@/auth/guest.guard';
+import { CurrencyPage } from '@/pages/currency/currency.page';
 
 export const appRoutes: Routes = [
 
@@ -19,6 +20,7 @@ export const appRoutes: Routes = [
         component: AppLayout,
         children: [
             { path: 'dashboard', component: Dashboard },
+            { path: 'currency', component: CurrencyPage },
             { path: 'uikit', loadChildren: () => import('./app/pages/uikit/uikit.routes') },
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },
             { path: 'landing', component: Landing }

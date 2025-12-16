@@ -24,7 +24,7 @@ export class AppMenu {
                 items: [
                     { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
                     { label: 'Accounts', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
-                    { label: 'Currency', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+                    { label: 'Currency', icon: 'pi pi-fw pi-money-bill', routerLink: ['/currency'] },
                     { label: 'Grafana', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
                 ]
             },
