@@ -30,6 +30,7 @@ import { CurrencyService } from './currency.service';
     ],
     providers: [MessageService, ConfirmationService],
     template: `
+        <h3>Currency</h3>
         <p-toolbar class="mb-4">
             <ng-template #start>
                 <p-button label="New" icon="pi pi-plus" (click)="openNew()" disabled/>
