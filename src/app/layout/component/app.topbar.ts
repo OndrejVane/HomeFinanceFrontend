@@ -8,13 +8,15 @@ import { LayoutService } from '../service/layout.service';
 import { AuthService } from '@/auth/auth.service';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
+import { version } from '../../../version/version';
+import { Tag } from 'primeng/tag';
 
 @Component({
     selector: 'app-topbar',
     standalone: true,
-    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator, Button, Dialog],
+    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator, Button, Dialog, Tag],
     template: ` <div class="layout-topbar">
-        <div class="layout-topbar-logo-container">
+        <div class="layout-topbar-logo-container gap-2">
             <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
                 <i class="pi pi-bars"></i>
             </button>
@@ -38,6 +40,7 @@ import { Dialog } from 'primeng/dialog';
                 </svg>
                 <span>SAKAI</span>
             </a>
+            <p-tag severity="info" value="{{version}}"></p-tag>
         </div>
 
         <div class="layout-topbar-actions">
@@ -111,9 +114,11 @@ export class AppTopbar {
     logoutUser() {
         this.auth.logout();
         this.closeConfirmation();
-        this.router.navigate(["/login"]);
+        this.router.navigate(['/login']);
     }
     toggleDarkMode() {
         this.layoutService.layoutConfig.update((state) => ({ ...state, darkTheme: !state.darkTheme }));
     }
+
+    protected readonly version = version;
 }

@@ -21,8 +21,12 @@ export class AppMenu {
     ngOnInit() {
         this.model = [
             {
-                label: 'Home',
-                items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
+                items: [
+                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+                    { label: 'Accounts', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+                    { label: 'Currency', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+                    { label: 'Grafana', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+                ]
             },
             {
                 label: 'UI Components',
@@ -133,22 +137,6 @@ export class AppMenu {
                                 items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' }]
                             }
                         ]
-                    }
-                ]
-            },
-            {
-                label: 'Get Started',
-                items: [
-                    {
-                        label: 'Documentation',
-                        icon: 'pi pi-fw pi-book',
-                        routerLink: ['/documentation']
-                    },
-                    {
-                        label: 'View Source',
-                        icon: 'pi pi-fw pi-github',
-                        url: 'https://github.com/primefaces/sakai-ng',
-                        target: '_blank'
                     }
                 ]
             }
