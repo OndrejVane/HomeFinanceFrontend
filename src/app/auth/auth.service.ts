@@ -26,7 +26,7 @@ export class AuthService {
     }
 
     refreshToken() {
-        return this.http.post(ApiEndpoints.Auth.login, {}, { withCredentials: true }).pipe(
+        return this.http.post(ApiEndpoints.Auth.refresh, {}, { withCredentials: true }).pipe(
             tap((res: any) => {
                 this.storage.setAccessToken(res.accessToken);
             })
