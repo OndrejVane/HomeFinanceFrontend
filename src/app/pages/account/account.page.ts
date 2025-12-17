@@ -1,51 +1,154 @@
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
-import { ToolbarModule } from 'primeng/toolbar';
 import { InputTextModule } from 'primeng/inputtext';
-import { DialogModule } from 'primeng/dialog';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { Component, OnInit } from '@angular/core';
-import { Account } from '@/pages/account/account.model';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ButtonModule } from 'primeng/button';
 import { ActivatedRoute } from '@angular/router';
-import { AccountService } from '@/pages/account/account.service';
+import { MovementService, MovementResponse } from './movement.service';
+import { Select } from 'primeng/select';
+import { CzCurrencyPipe } from '@/pages/currency/formaters/cz-currency-formatter';
+import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
 
 @Component({
     selector: 'app-account-crud',
     standalone: true,
-    imports: [CommonModule, FormsModule, TableModule, ButtonModule, ToolbarModule, InputTextModule, DialogModule, ToastModule, ConfirmDialogModule],
-    providers: [MessageService, ConfirmationService],
+    imports: [CommonModule, FormsModule, TableModule, InputTextModule, InputNumberModule, ButtonModule, Select, CzCurrencyPipe, CzDateFormatter],
     template: `
-        <div *ngIf="account">
-            <h1>{{account.name}}</h1>
+        <div class="card">
+            <h2 class="mb-3">Movements</h2>
 
-            <p>Name: {{ account.name }}</p>
-            <p>Code: {{ account.code }}</p>
-            <p>Balance: {{ account.currentBalance }}</p>
+            <p-table [value]="movements" [lazy]="true" [lazyLoadOnInit]="true" [paginator]="true" [rows]="20"
+                     [totalRecords]="totalRecords" [loading]="loading" dataKey="id" editMode="row"
+                     (onLazyLoad)="loadMovements($event)">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <!-- Date -->
+                        <td>{{ row.date | czDateFormatter }}</td>
+
+                        <!-- Description -->
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <input pInputText [(ngModel)]="row.description" (blur)="saveMovement(row)" />
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{ row.description }}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <!-- Type -->
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <p-select [options]="getMovementTypes(row)" [(ngModel)]="row.type"
+                                              optionLabel="label" optionValue="value"
+                                              (onChange)="saveMovement(row)"></p-select>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    {{ row.type }}
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+
+                        <!-- Amount -->
+                        <td pEditableColumn>
+                            <p-cellEditor>
+                                <ng-template pTemplate="input">
+                                    <p-inputNumber [(ngModel)]="row.amount" mode="decimal" [minFractionDigits]="2"
+                                                   (onBlur)="saveMovement(row)"></p-inputNumber>
+                                </ng-template>
+                                <ng-template pTemplate="output">
+                                    <span [ngClass]="getAmountClass(row.type)">
+                                        {{ row.amount | czCurrency }}
+                                    </span>
+                                </ng-template>
+                            </p-cellEditor>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
         </div>
     `
 })
 export class AccountPage implements OnInit {
+    movements: MovementResponse[] = [];
+    totalRecords = 0;
+    loading = true;
+
     accountId!: number;
-    account?: Account;
+
+    positiveMovementTypes = [
+        { label: 'Revenue', value: 'REVENUE' },
+        { label: 'Inflow', value: 'INFLOW' }
+    ];
+
+    negativeMovementTypes = [
+        { label: 'Expense', value: 'EXPENSE' },
+        { label: 'Outflow', value: 'OUTFLOW' }
+    ];
 
     constructor(
-        private route: ActivatedRoute,
-        private accountService: AccountService
+        private movementService: MovementService,
+        private route: ActivatedRoute
     ) {}
 
     ngOnInit(): void {
-        this.accountId = Number(this.route.snapshot.paramMap.get('id'))!;
-        this.loadAccount();
+        this.accountId = Number(this.route.snapshot.paramMap.get('id'));
     }
 
-    loadAccount() {
-        this.accountService.getById(this.accountId).subscribe({
-            next: (acc) => (this.account = acc),
-            error: (err) => console.error('Chyba při načítání účtu', err)
+    loadMovements(event: any) {
+        const page = event.first / event.rows;
+        const size = event.rows;
+
+        this.movementService.getMovements(this.accountId, page, size).subscribe({
+            next: (pageData) => {
+                this.movements = pageData.content;
+                this.totalRecords = pageData.totalElements;
+                this.loading = false;
+            },
+            error: () => {
+                this.loading = false;
+            }
         });
+    }
+
+    saveMovement(movement: MovementResponse) {
+        this.movementService.updateMovement(movement).subscribe();
+    }
+
+    getAmountClass(type: string): string {
+        switch (type) {
+            case 'REVENUE':
+            case 'INFLOW':
+                return 'text-green-600 dark:text-green-400';
+            case 'EXPENSE':
+            case 'OUTFLOW':
+                return 'text-red-600 dark:text-red-400';
+            default:
+                return '';
+        }
+    }
+
+    getMovementTypes(movement: MovementResponse): {
+        label: string;
+        value: string;
+    }[] {
+        if (movement.amount > 0) {
+            return this.positiveMovementTypes;
+        } else {
+            return this.negativeMovementTypes;
+        }
     }
 }
