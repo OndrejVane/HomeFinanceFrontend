@@ -12,6 +12,10 @@ export class AccountService {
         return this.http.get<Account[]>(ApiEndpoints.Account.base);
     }
 
+    getById(id: number): Observable<Account> {
+        return this.http.get<Account>(ApiEndpoints.Account.byId(id));
+    }
+
     create(account: Account): Observable<Account> {
         return this.http.post<Account>(ApiEndpoints.Account.base, account);
     }

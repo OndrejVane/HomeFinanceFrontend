@@ -1,13 +1,14 @@
 import { Routes } from '@angular/router';
-import { AppLayout } from './app/layout/component/app.layout';
-import { Dashboard } from './app/pages/dashboard/dashboard';
-import { Landing } from './app/pages/landing/landing';
-import { Notfound } from './app/pages/notfound/notfound';
-import { Login } from './app/pages/auth/login';
-import { Register } from './app/pages/auth/register';
+import { AppLayout } from '@/layout/component/app.layout';
+import { Dashboard } from '@/pages/dashboard/dashboard';
+import { Landing } from '@/pages/landing/landing';
+import { Notfound } from '@/pages/notfound/notfound';
+import { Login } from '@/pages/auth/login';
+import { Register } from '@/pages/auth/register';
 import { AuthGuard } from '@/auth/auth.guard';
 import { GuestGuard } from '@/auth/guest.guard';
 import { CurrencyPage } from '@/pages/currency/currency.page';
+import { AccountsPage } from '@/pages/account/accounts.page';
 import { AccountPage } from '@/pages/account/account.page';
 
 export const appRoutes: Routes = [
@@ -21,7 +22,8 @@ export const appRoutes: Routes = [
         component: AppLayout,
         children: [
             { path: 'dashboard', component: Dashboard },
-            { path: 'accounts', component: AccountPage },
+            { path: 'account', component: AccountsPage },
+            { path: 'account/:id', component: AccountPage },
             { path: 'currency', component: CurrencyPage },
             { path: 'uikit', loadChildren: () => import('./app/pages/uikit/uikit.routes') },
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },

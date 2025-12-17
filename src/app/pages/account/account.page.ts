@@ -7,42 +7,45 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { AccountWidgetComponent } from '@/pages/account/components/accountwidget';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Component, OnInit } from '@angular/core';
 import { Account } from '@/pages/account/account.model';
-import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 import { AccountService } from '@/pages/account/account.service';
 
 @Component({
     selector: 'app-account-crud',
     standalone: true,
-    imports: [
-        CommonModule,
-        FormsModule,
-        TableModule,
-        ButtonModule,
-        ToolbarModule,
-        InputTextModule,
-        DialogModule,
-        ToastModule,
-        ConfirmDialogModule,
-        AccountWidgetComponent
-    ],
+    imports: [CommonModule, FormsModule, TableModule, ButtonModule, ToolbarModule, InputTextModule, DialogModule, ToastModule, ConfirmDialogModule],
     providers: [MessageService, ConfirmationService],
     template: `
-        <h1>Accounts</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            <app-account-widget *ngFor="let account of accounts$ | async" [account]="account"></app-account-widget>
+        <div *ngIf="account">
+            <h1>{{account.name}}</h1>
+
+            <p>Name: {{ account.name }}</p>
+            <p>Code: {{ account.code }}</p>
+            <p>Balance: {{ account.currentBalance }}</p>
         </div>
     `
 })
 export class AccountPage implements OnInit {
-    accounts$!: Observable<Account[]>;
+    accountId!: number;
+    account?: Account;
 
-    constructor(private accountService: AccountService) {}
+    constructor(
+        private route: ActivatedRoute,
+        private accountService: AccountService
+    ) {}
 
     ngOnInit(): void {
-        this.accounts$ = this.accountService.getAll();
+        this.accountId = Number(this.route.snapshot.paramMap.get('id'))!;
+        this.loadAccount();
+    }
+
+    loadAccount() {
+        this.accountService.getById(this.accountId).subscribe({
+            next: (acc) => (this.account = acc),
+            error: (err) => console.error('Chyba při načítání účtu', err)
+        });
     }
 }
