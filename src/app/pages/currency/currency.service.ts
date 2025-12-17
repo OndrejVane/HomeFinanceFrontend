@@ -1,31 +1,30 @@
-// currency.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Currency } from './currency.model';
-import { environment } from '../../../environments/environment';
+import { ApiEndpoints } from '@/api/api-endpoints';
 
 @Injectable({ providedIn: 'root' })
 export class CurrencyService {
 
-    baseApiUrl: string = environment.apiUrl;
-    private readonly apiUrl = this.baseApiUrl + '/currency'; // uprav dle proxy / baseUrl
-
     constructor(private http: HttpClient) {}
 
     getCurrencies(): Observable<Currency[]> {
-        return this.http.get<Currency[]>(this.apiUrl);
+        return this.http.get<Currency[]>(ApiEndpoints.Currency.base);
     }
 
     create(currency: Currency): Observable<Currency> {
-        return this.http.post<Currency>(this.apiUrl, currency);
+        return this.http.post<Currency>(ApiEndpoints.Currency.base, currency);
     }
 
     update(currency: Currency): Observable<Currency> {
-        return this.http.put<Currency>(`${this.apiUrl}/${currency.id}`, currency);
+        if (currency.id == null) {
+            throw new Error("Currency.id is required for update");
+        }
+        return this.http.put<Currency>(ApiEndpoints.Currency.byId(currency.id), currency);
     }
 
     delete(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.apiUrl}/${id}`);
+        return this.http.delete<void>(ApiEndpoints.Currency.byId(id));
     }
 }

@@ -6,6 +6,7 @@ import Aura from '@primeuix/themes/aura';
 import { providePrimeNG } from 'primeng/config';
 import { appRoutes } from './app.routes';
 import { AuthInterceptor } from '@/auth/auth.interceptor';
+import { ApiBaseUrlInterceptor } from '@/api/api-base-url.interceptor';
 
 export const appConfig: ApplicationConfig = {
     providers: [
@@ -17,6 +18,11 @@ export const appConfig: ApplicationConfig = {
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptor,
             multi: true
-        }
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: ApiBaseUrlInterceptor,
+            multi: true
+        },
     ]
 };
