@@ -40,7 +40,7 @@ import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
                         <td pEditableColumn>
                             <p-cellEditor>
                                 <ng-template pTemplate="input">
-                                    <input pInputText [(ngModel)]="row.description" (blur)="saveMovement(row)" />
+                                    <input pInputText [(ngModel)]="row.description" (blur)="saveMovement(row)" (keydown.enter)="saveMovement(row)" />
                                 </ng-template>
                                 <ng-template pTemplate="output">
                                     {{ row.description }}
@@ -67,7 +67,7 @@ import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
                             <p-cellEditor>
                                 <ng-template pTemplate="input">
                                     <p-inputNumber [(ngModel)]="row.amount" mode="decimal" [minFractionDigits]="2"
-                                                   (onBlur)="saveMovement(row)"></p-inputNumber>
+                                                   (onBlur)="saveMovement(row)" (keydown.enter)="saveMovement(row)"></p-inputNumber>
                                 </ng-template>
                                 <ng-template pTemplate="output">
                                     <span [ngClass]="getAmountClass(row.type)">
