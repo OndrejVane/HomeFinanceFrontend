@@ -10,21 +10,21 @@ import { MovementService, MovementResponse } from './movement.service';
 import { Select } from 'primeng/select';
 import { CzCurrencyPipe } from '@/pages/currency/formaters/cz-currency-formatter';
 import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
+import { Tag } from 'primeng/tag';
 
 @Component({
     selector: 'app-account-crud',
     standalone: true,
-    imports: [CommonModule, FormsModule, TableModule, InputTextModule, InputNumberModule, ButtonModule, Select, CzCurrencyPipe, CzDateFormatter],
+    imports: [CommonModule, FormsModule, TableModule, InputTextModule, InputNumberModule, ButtonModule, Select, CzCurrencyPipe, CzDateFormatter, Tag, TableModule],
     template: `
         <div class="card">
             <h2 class="mb-3">Movements</h2>
 
-            <p-table [value]="movements" [lazy]="true" [lazyLoadOnInit]="true" [paginator]="true" [rows]="20"
-                     [totalRecords]="totalRecords" [loading]="loading" dataKey="id" editMode="row"
-                     (onLazyLoad)="loadMovements($event)">
+            <p-table [value]="movements" [lazy]="true" [lazyLoadOnInit]="true" [paginator]="true" [rows]="20" [totalRecords]="totalRecords" [loading]="loading" dataKey="id" editMode="row" (onLazyLoad)="loadMovements($event)">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Date</th>
+                        <th>New</th>
                         <th>Description</th>
                         <th>Type</th>
                         <th>Amount</th>
@@ -35,6 +35,11 @@ import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
                     <tr>
                         <!-- Date -->
                         <td>{{ row.date | czDateFormatter }}</td>
+
+                        <!-- Is new movememnt -->
+                        <td>
+                            <p-tag *ngIf="row.isNew" severity="info" value="New"></p-tag>
+                        </td>
 
                         <!-- Description -->
                         <td pEditableColumn>
@@ -52,9 +57,7 @@ import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
                         <td pEditableColumn>
                             <p-cellEditor>
                                 <ng-template pTemplate="input">
-                                    <p-select [options]="getMovementTypes(row)" [(ngModel)]="row.type"
-                                              optionLabel="label" optionValue="value"
-                                              (onChange)="saveMovement(row)"></p-select>
+                                    <p-select [options]="getMovementTypes(row)" [(ngModel)]="row.type" optionLabel="label" optionValue="value" (onChange)="saveMovement(row)"></p-select>
                                 </ng-template>
                                 <ng-template pTemplate="output">
                                     {{ row.type }}
@@ -66,8 +69,7 @@ import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
                         <td pEditableColumn>
                             <p-cellEditor>
                                 <ng-template pTemplate="input">
-                                    <p-inputNumber [(ngModel)]="row.amount" mode="decimal" [minFractionDigits]="2"
-                                                   (onBlur)="saveMovement(row)" (keydown.enter)="saveMovement(row)"></p-inputNumber>
+                                    <p-inputNumber [(ngModel)]="row.amount" mode="decimal" [minFractionDigits]="2" (onBlur)="saveMovement(row)" (keydown.enter)="saveMovement(row)"></p-inputNumber>
                                 </ng-template>
                                 <ng-template pTemplate="output">
                                     <span [ngClass]="getAmountClass(row.type)">
@@ -125,6 +127,7 @@ export class AccountPage implements OnInit {
     }
 
     saveMovement(movement: MovementResponse) {
+        movement.isNew = false;
         this.movementService.updateMovement(movement).subscribe();
     }
 

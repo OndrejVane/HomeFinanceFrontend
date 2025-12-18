@@ -11,6 +11,7 @@ export interface MovementResponse {
     amount: number;
     hash: string;
     accountId: number;
+    isNew: boolean;
 }
 
 export interface Page<T> {
