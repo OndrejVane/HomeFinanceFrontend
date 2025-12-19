@@ -1,0 +1,27 @@
+{
+    "app": {
+        "name": "Home Finance",
+        "navigation": {
+            "dashboard": "Dashboard",
+            "home": "Home",
+            "login": "Login",
+            "settings": "Settings",
+            "transactions": "Transactions"
+        }
+    },
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "email": "Email",
+    "emailAddress": "Email Address",
+    "error": "Something went wrong",
+    "loading": "Loading...",
+    "login": "Login",
+    "loginToContinue": "Please login to continue",
+    "logout": "Logout",
+    "password": "Password",
+    "save": "Save",
+    "dontHaveAccount": "Don't have an account?",
+    "forgotPassword": "Forgot password?",
+    "loginFailed": "Login failed"
+}

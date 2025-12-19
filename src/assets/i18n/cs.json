@@ -1,0 +1,27 @@
+{
+    "app": {
+        "name": "Home Finance",
+        "navigation": {
+            "dashboard": "Přehled",
+            "home": "Domů",
+            "login": "Přihlásit se",
+            "settings": "Nastavení",
+            "transactions": "Transakce"
+        }
+    },
+    "cancel": "Zrušit",
+    "delete": "Smazat",
+    "edit": "Upravit",
+    "email": "Email",
+    "emailAddress": "Emailová adresa",
+    "error": "Něco se nepovedlo",
+    "loading": "Načítání...",
+    "login": "Přihlásit se",
+    "loginToContinue": "Chcete-li pokračovat, přihlaste se",
+    "logout": "Odhlásit se",
+    "password": "Heslo",
+    "save": "Uložit",
+    "dontHaveAccount": "Nemáte vytvořený účet?",
+    "forgotPassword": "Zapomenuté heslo",
+    "loginFailed": "Přihlašení selhalo"
+}
