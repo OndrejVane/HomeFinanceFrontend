@@ -117,15 +117,9 @@ export class AccountPage implements OnInit {
 
     accountId!: number;
 
-    positiveMovementTypes = [
-        { label: 'revenue', value: 'REVENUE' },
-        { label: 'inflow', value: 'INFLOW' }
-    ];
+    positiveMovementTypes: {label: string, value: string}[] = [];
 
-    negativeMovementTypes = [
-        { label: 'expense', value: 'EXPENSE' },
-        { label: 'outflow', value: 'OUTFLOW' }
-    ];
+    negativeMovementTypes: {label: string, value: string}[] = [];
 
     constructor(
         private movementService: MovementService,
@@ -136,6 +130,18 @@ export class AccountPage implements OnInit {
 
     ngOnInit(): void {
         this.accountId = Number(this.route.snapshot.paramMap.get('id'));
+
+        this.translate.get(['expense', 'outflow', 'revenue', 'inflow']).subscribe((t) => {
+            this.negativeMovementTypes = [
+                { label: t['expense'], value: 'EXPENSE' },
+                { label: t['outflow'], value: 'OUTFLOW' }
+            ];
+
+            this.positiveMovementTypes = [
+                { label: t['revenue'], value: 'REVENUE' },
+                { label: t['inflow'], value: 'INFLOW' }
+            ];
+        });
     }
 
     loadMovements(event: any) {
