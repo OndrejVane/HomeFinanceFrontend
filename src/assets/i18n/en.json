@@ -23,5 +23,13 @@
     "save": "Save",
     "dontHaveAccount": "Don't have an account?",
     "forgotPassword": "Forgot password?",
-    "loginFailed": "Login failed"
+    "loginFailed": "Login failed",
+    "yes": "Ano",
+    "no": "Ne",
+    "confirmation": "Potvrzení",
+    "areYouSureToDelete": "Opravdu chcete smazat tento záznam?",
+    "outflow": "Výdej",
+    "inflow": "Příjem",
+    "expense": "Náklad",
+    "revenue": "Výnos"
 }

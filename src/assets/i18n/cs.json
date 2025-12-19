@@ -23,5 +23,14 @@
     "save": "Uložit",
     "dontHaveAccount": "Nemáte vytvořený účet?",
     "forgotPassword": "Zapomenuté heslo",
-    "loginFailed": "Přihlašení selhalo"
+    "loginFailed": "Přihlašení selhalo",
+    "yes": "Ano",
+    "no": "Ne",
+    "confirmation": "Potvrzení",
+    "areYouSureToDelete": "Opravdu chcete smazat tento záznam?",
+    "outflow": "Výdej",
+    "inflow": "Příjem",
+    "expense": "Náklad",
+    "revenue": "Výnos"
+
 }

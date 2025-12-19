@@ -11,11 +11,28 @@ import { Select } from 'primeng/select';
 import { CzCurrencyPipe } from '@/pages/currency/formaters/cz-currency-formatter';
 import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
 import { Tag } from 'primeng/tag';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-account-crud',
     standalone: true,
-    imports: [CommonModule, FormsModule, TableModule, InputTextModule, InputNumberModule, ButtonModule, Select, CzCurrencyPipe, CzDateFormatter, Tag, TableModule],
+    imports: [CommonModule,
+        FormsModule,
+        TableModule,
+        InputTextModule,
+        InputNumberModule,
+        ButtonModule,
+        Select,
+        CzCurrencyPipe,
+        CzDateFormatter,
+        Tag,
+        TableModule,
+        ConfirmDialogModule,
+        TranslateModule
+    ],
+    providers: [ConfirmationService],
     template: `
         <div class="card">
             <h2 class="mb-3">Movements</h2>
@@ -28,6 +45,7 @@ import { Tag } from 'primeng/tag';
                         <th>Description</th>
                         <th>Type</th>
                         <th>Amount</th>
+                        <th>Actions</th>
                     </tr>
                 </ng-template>
 
@@ -38,7 +56,7 @@ import { Tag } from 'primeng/tag';
 
                         <!-- Is new movememnt -->
                         <td>
-                            <p-tag *ngIf="row.isNew" severity="info" value="New"></p-tag>
+                            <p-tag *ngIf="row.imported" severity="info" value="New"></p-tag>
                         </td>
 
                         <!-- Description -->
@@ -60,7 +78,7 @@ import { Tag } from 'primeng/tag';
                                     <p-select [options]="getMovementTypes(row)" [(ngModel)]="row.type" optionLabel="label" optionValue="value" (onChange)="saveMovement(row)"></p-select>
                                 </ng-template>
                                 <ng-template pTemplate="output">
-                                    {{ row.type }}
+                                    {{ getTranslatedMovementType(row) }}
                                 </ng-template>
                             </p-cellEditor>
                         </td>
@@ -78,9 +96,17 @@ import { Tag } from 'primeng/tag';
                                 </ng-template>
                             </p-cellEditor>
                         </td>
+
+                        <!-- Actions -->
+                        <td class="text-center">
+                            <p-button (click)="confirmDelete(row)" icon="pi pi-times" severity="danger" text raised rounded />
+                        </td>
                     </tr>
                 </ng-template>
             </p-table>
+
+            <!-- Globální potvrzovací dialog -->
+            <p-confirmDialog></p-confirmDialog>
         </div>
     `
 })
@@ -92,18 +118,20 @@ export class AccountPage implements OnInit {
     accountId!: number;
 
     positiveMovementTypes = [
-        { label: 'Revenue', value: 'REVENUE' },
-        { label: 'Inflow', value: 'INFLOW' }
+        { label: 'revenue', value: 'REVENUE' },
+        { label: 'inflow', value: 'INFLOW' }
     ];
 
     negativeMovementTypes = [
-        { label: 'Expense', value: 'EXPENSE' },
-        { label: 'Outflow', value: 'OUTFLOW' }
+        { label: 'expense', value: 'EXPENSE' },
+        { label: 'outflow', value: 'OUTFLOW' }
     ];
 
     constructor(
         private movementService: MovementService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private confirmationService: ConfirmationService,
+        private translate: TranslateService
     ) {}
 
     ngOnInit(): void {
@@ -127,8 +155,43 @@ export class AccountPage implements OnInit {
     }
 
     saveMovement(movement: MovementResponse) {
-        movement.isNew = false;
+        movement.imported = false;
         this.movementService.updateMovement(movement).subscribe();
+    }
+
+    confirmDelete(movement: MovementResponse) {
+        this.confirmationService.confirm({
+            message: this.translate.instant('areYouSureToDelete'),
+            header: this.translate.instant('confirmation'),
+            defaultFocus: 'accept',
+
+            // textové šedé tlačítko "No"
+            icon: 'pi pi-exclamation-triangle',
+            rejectLabel: this.translate.instant('no'),
+            rejectIcon: 'pi pi-times',
+
+            // červené outlined tlačítko "Yes"
+            rejectButtonStyleClass: 'p-button-text p-button-secondary',
+            acceptLabel: this.translate.instant('yes'),
+            acceptIcon: 'pi pi-check',
+
+            acceptButtonStyleClass: 'p-button-outlined p-button-danger',
+
+            accept: () => this.deleteMovement(movement)
+        });
+    }
+
+    private deleteMovement(movement: MovementResponse) {
+        if (!movement.id) {
+            return;
+        }
+
+        this.movementService.deleteMovement(movement.id).subscribe({
+            next: () => {
+                this.movements = this.movements.filter((m) => m.id !== movement.id);
+                this.totalRecords = this.totalRecords - 1;
+            }
+        });
     }
 
     getAmountClass(type: string): string {
@@ -153,5 +216,9 @@ export class AccountPage implements OnInit {
         } else {
             return this.negativeMovementTypes;
         }
+    }
+
+    getTranslatedMovementType(movement: MovementResponse): string {
+        return this.translate.instant(movement.type.toLowerCase());
     }
 }

@@ -11,7 +11,7 @@ export interface MovementResponse {
     amount: number;
     hash: string;
     accountId: number;
-    isNew: boolean;
+    imported: boolean;
 }
 
 export interface Page<T> {
@@ -45,5 +45,9 @@ export class MovementService {
 
     updateMovement(movement: MovementResponse): Observable<void> {
         return this.http.put<void>(ApiEndpoints.Movement.byId(movement.id), movement);
+    }
+
+    deleteMovement(id: number): Observable<void> {
+        return this.http.delete<void>(ApiEndpoints.Movement.byId(id));
     }
 }
