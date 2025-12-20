@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
@@ -143,6 +143,7 @@ import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
 })
 export class MovementTableComponent implements OnInit {
     @Input({ required: true }) accountId!: number;
+    @Output() movementsChanged = new EventEmitter<void>();
 
     movements: MovementResponse[] = [];
     totalRecords = 0;
@@ -189,7 +190,11 @@ export class MovementTableComponent implements OnInit {
 
     saveMovement(movement: MovementResponse) {
         movement.imported = false;
-        this.movementService.updateMovement(movement).subscribe();
+        this.movementService.updateMovement(movement).subscribe({
+            next: () => {
+                this.movementsChanged.emit();
+            }
+        });
     }
 
     confirmDelete(movement: MovementResponse) {
@@ -217,6 +222,7 @@ export class MovementTableComponent implements OnInit {
             next: () => {
                 this.movements = this.movements.filter((m) => m.id !== movement.id);
                 this.totalRecords = this.totalRecords - 1;
+                this.movementsChanged.emit();
             }
         });
     }

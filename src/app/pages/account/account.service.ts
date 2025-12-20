@@ -1,19 +1,27 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiEndpoints } from '@/api/api-endpoints';
-import { Account } from '@/pages/account/account.model';
 
-@Injectable({ providedIn: 'root' })
+import { Account } from './account.model';
+import { ApiEndpoints } from '@/api/api-endpoints';
+import { AccountStatsResponse } from '@/pages/account/model/account-stats.model';
+
+@Injectable({
+    providedIn: 'root'
+})
 export class AccountService {
     constructor(private http: HttpClient) {}
 
-    getAll(): Observable<Account[]> {
-        return this.http.get<Account[]>(ApiEndpoints.Account.base);
-    }
-
     getById(id: number): Observable<Account> {
         return this.http.get<Account>(ApiEndpoints.Account.byId(id));
+    }
+
+    getStats(id: number): Observable<AccountStatsResponse> {
+        return this.http.get<AccountStatsResponse>(ApiEndpoints.Account.stats(id));
+    }
+
+    getAll(): Observable<Account[]> {
+        return this.http.get<Account[]>(ApiEndpoints.Account.base);
     }
 
     create(account: Account): Observable<Account> {

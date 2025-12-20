@@ -14,7 +14,8 @@ export const ApiEndpoints = {
     Account: {
         base: '/account',
         byId: (id: number | string) => `/account/${id}`,
-        import: (id: number | string) => `/account/${id}/import`
+        import: (id: number | string) => `/account/${id}/import`,
+        stats: (id: number | string) => `/account/${id}/stats`
     },
 
     Movement: {
