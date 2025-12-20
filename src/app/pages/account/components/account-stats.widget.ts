@@ -4,7 +4,6 @@ import { AccountStatsResponse } from '@/pages/account/model/account-stats.model'
 import { AccountService } from '@/pages/account/account.service';
 import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
 import { CzCurrencyPipe } from '@/pages/currency/formaters/cz-currency-formatter';
-import { Account } from '@/pages/account/account.model';
 
 
 @Component({
