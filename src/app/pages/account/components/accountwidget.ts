@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
                     <span class="block text-muted-color font-medium text-lg mb-2">
                         {{ account.name }}
                     </span>
-                    <div class="font-medium text-xl" [ngClass]="balanceColor"> <!-- TODO tady se nemusí obarvovat, tady bude vždy kladná. Přidám field monthly balance, který se bude obarvovat -->
+                    <div class="font-medium text-xl" [ngClass]="balanceColor">
                         {{ account.currentBalance | czCurrency }} <!-- TODO: udělat formátování podlě měny-->
                     </div>
                     <div class="text-muted-color text-sm mt-2">
