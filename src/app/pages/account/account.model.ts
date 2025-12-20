@@ -6,4 +6,5 @@ export interface Account {
     currency: number;
     importType: string;
     currentBalance: number;
+    last30DaysBalance: number;
 }

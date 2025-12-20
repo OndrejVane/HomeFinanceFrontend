@@ -15,14 +15,17 @@ import { Router } from '@angular/router';
         >
             <div class="flex justify-between mb-4">
                 <div>
-                    <span class="block text-muted-color font-medium mb-2">
+                    <span class="block text-muted-color font-medium text-lg mb-2">
                         {{ account.name }}
                     </span>
                     <div class="font-medium text-xl" [ngClass]="balanceColor"> <!-- TODO tady se nemusí obarvovat, tady bude vždy kladná. Přidám field monthly balance, který se bude obarvovat -->
                         {{ account.currentBalance | czCurrency }} <!-- TODO: udělat formátování podlě měny-->
                     </div>
-                    <div class="text-muted-color text-sm">
-                        {{ account.code }}
+                    <div class="text-muted-color text-sm mt-2">
+                        Posledních 30 dní:
+                        <span [ngClass]="balanceColor">
+                            {{ account.last30DaysBalance }}
+                        </span>
                     </div>
                 </div>
 
