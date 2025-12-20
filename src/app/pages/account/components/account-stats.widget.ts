@@ -3,85 +3,179 @@ import { CommonModule } from '@angular/common';
 import { AccountStatsResponse } from '@/pages/account/model/account-stats.model';
 import { AccountService } from '@/pages/account/account.service';
 import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
+import { CzCurrencyPipe } from '@/pages/currency/formaters/cz-currency-formatter';
+import { Account } from '@/pages/account/account.model';
 
 
 @Component({
     standalone: true,
     selector: 'app-stats-widget',
-    imports: [CommonModule, CzDateFormatter],
-    template: `
-        <div *ngIf="loading" class="mb-3">Načítání statistik...</div>
+    imports: [CommonModule, CzDateFormatter, CzCurrencyPipe],
+        template: `
+            <div *ngIf="loading" class="mb-1">Načítání statistik...</div>
 
-        <div *ngIf="error" class="mb-3 text-red-500">Nepodařilo se načíst statistiky účtu.</div>
+            <div *ngIf="error" class="mb-1 text-red-500">Nepodařilo se načíst statistiky účtu.</div>
 
-        <div *ngIf="stats" class="grid grid-cols-12 gap-4 mb-4">
-            <!-- Aktuální stav účtu -->
-            <div class="col-span-12 lg:col-span-6 xl:col-span-3">
-                <div class="card mb-0">
-                    <div class="flex justify-between mb-2">
-                        <div>
-                            <span class="block text-muted-color font-medium mb-2"> Aktuální zůstatek </span>
-                            <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
-                                {{ stats.currentBalance | number: '1.2-2' }}
+            <div *ngIf="stats" class="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-2">
+                <!-- KARTA 0 LEVÁ: ZŮSTATEK -->
+                <div class="card h-full !mb-0 !pt-1 !pb-1">
+                    <h3 class="font-semibold text-lg mb-2">Shrnutí účtu – zůstatek</h3>
+
+                    <div>
+                        <span class="block text-muted-color font-medium mb-1">Aktuální zůstatek</span>
+                        <div
+                            class="text-surface-900 dark:text-surface-0 font-medium text-3xl"
+                            [ngClass]="getAmountClass(stats.currentBalance)"
+                        >
+                            {{ stats.currentBalance | czCurrency }}
+                        </div>
+                        <span class="text-muted-color text-sm block mt-1">
+                            Počáteční zůstatek: {{ stats.initialBalance | czCurrency }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- KARTA 0 PRAVÁ: POHYBY -->
+                <div class="card h-full !mb-0 !pt-1 !pb-1">
+                    <h3 class="font-semibold text-lg mb-2">Shrnutí účtu – pohyby</h3>
+
+                    <div>
+                        <span class="block text-muted-color font-medium mb-1">Pohyby</span>
+                        <span class="text-muted-color text-sm block">
+                            Počet pohybů: {{ stats.movementsCount }}
+                        </span>
+                        <span class="text-muted-color text-sm block" *ngIf="stats.lastMovementDate">
+                            Poslední pohyb: {{ stats.lastMovementDate | czDateFormatter }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- KARTA 1: CELKOVÉ STATISTIKY ÚČTU -->
+                <div class="card h-full !mb-0 !pt-1 !pb-1">
+                    <h3 class="font-semibold text-lg mb-2">Celkové statistiky účtu</h3>
+
+                    <!-- Celkové pohyby -->
+                    <div class="mb-2 pb-2 border-b border-surface-200 dark:border-surface-700">
+                        <div class="flex justify-between mb-1">
+                            <div>
+                                <span class="block text-muted-color font-medium mb-1">Celkové pohyby</span>
+                                <div class="font-medium text-xl" [ngClass]="getAmountClass(stats.netTotal)">
+                                    {{ stats.netTotal | czCurrency }}
+                                </div>
                             </div>
                         </div>
+                        <span class="text-muted-color text-sm block">
+                            Příjmy/Výdaje: {{ stats.netFlow | czCurrency }}
+                        </span>
+                        <span class="text-muted-color text-sm">
+                            Výnosy/Náklady: {{ stats.netExpense | czCurrency }}
+                        </span>
                     </div>
-                    <span class="text-muted-color text-sm"> Počáteční zůstatek: {{ stats.initialBalance | number: '1.2-2' }} </span>
-                </div>
-            </div>
 
-            <!-- Celkový tok -->
-            <div class="col-span-12 lg:col-span-6 xl:col-span-3">
-                <div class="card mb-0">
-                    <div class="flex justify-between mb-2">
-                        <div>
-                            <span class="block text-muted-color font-medium mb-2"> Celkový tok </span>
-                            <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
-                                {{ stats.netFlow | number: '1.2-2' }}
+                    <!-- Celkové příjmy vs. výdaje -->
+                    <div class="mb-2 pb-2 border-b border-surface-200 dark:border-surface-700">
+                        <div class="flex justify-between mb-1">
+                            <div>
+                                <span class="block text-muted-color font-medium mb-1">Celkové příjmy vs. výdaje</span>
+                                <div class="font-medium text-xl" [ngClass]="getAmountClass(stats.netFlow)">
+                                    {{ stats.netFlow | czCurrency }}
+                                </div>
                             </div>
                         </div>
+                        <span class="text-muted-color text-sm block">
+                            Příjmy: {{ stats.totalInflow | czCurrency }}
+                        </span>
+                        <span class="text-muted-color text-sm">
+                            Výdaje: {{ stats.totalOutflow | czCurrency }}
+                        </span>
                     </div>
-                    <span class="text-muted-color text-sm block"> Příjmy: {{ stats.totalInflow | number: '1.2-2' }} </span>
-                    <span class="text-muted-color text-sm"> Výdaje: {{ stats.totalOutflow | number: '1.2-2' }} </span>
-                </div>
-            </div>
 
-            <!-- Čisté náklady (celkem) -->
-            <div class="col-span-12 lg:col-span-6 xl:col-span-3">
-                <div class="card mb-0">
-                    <div class="flex justify-between mb-2">
-                        <div>
-                            <span class="block text-muted-color font-medium mb-2"> Čisté náklady </span>
-                            <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
-                                {{ stats.netExpense | number: '1.2-2' }}
+                    <!-- Celkové výnosy vs. náklady -->
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <div>
+                                <span class="block text-muted-color font-medium mb-1">Celkové výnosy vs. náklady</span>
+                                <div class="font-medium text-xl" [ngClass]="getAmountClass(stats.netExpense)">
+                                    {{ stats.netExpense | czCurrency }}
+                                </div>
                             </div>
                         </div>
+                        <span class="text-muted-color text-sm block">
+                            Náklady: {{ stats.totalExpense | czCurrency }}
+                        </span>
+                        <span class="text-muted-color text-sm">
+                            Výnosy: {{ stats.totalRevenue | czCurrency }}
+                        </span>
                     </div>
-                    <span class="text-muted-color text-sm block"> Náklady: {{ stats.totalExpense | number: '1.2-2' }} </span>
-                    <span class="text-muted-color text-sm"> Výnosy: {{ stats.totalRevenue | number: '1.2-2' }} </span>
                 </div>
-            </div>
 
-            <!-- Posledních 30 dní + počet pohybů -->
-            <div class="col-span-12 lg:col-span-6 xl:col-span-3">
-                <div class="card mb-0">
-                    <div class="flex justify-between mb-2">
-                        <div>
-                            <span class="block text-muted-color font-medium mb-2"> Posledních 30 dní </span>
-                            <div class="text-surface-900 dark:text-surface-0 font-medium text-xl">
-                                {{ stats.last30DaysNetFlow | number: '1.2-2' }}
+                <!-- KARTA 2: STATISTIKY ZA POSLEDNÍCH 30 DNÍ -->
+                <div class="card h-full !mb-0 !pt-1 !pb-1">
+                    <h3 class="font-semibold text-lg mb-2">Statistiky za posledních 30 dní</h3>
+
+                    <!-- Celkové pohyby za 30 dní -->
+                    <div class="mb-2 pb-2 border-b border-surface-200 dark:border-surface-700">
+                        <div class="flex justify-between mb-1">
+                            <div>
+                                <span class="block text-muted-color font-medium mb-1">
+                                    Celkové pohyby za posledních 30 dnů
+                                </span>
+                                <div class="font-medium text-xl" [ngClass]="getAmountClass(stats.last30DaysNetTotal)">
+                                    {{ stats.last30DaysNetTotal | czCurrency }}
+                                </div>
                             </div>
                         </div>
+                        <span class="text-muted-color text-sm block">
+                            Příjmy/Výdaje: {{ stats.last30DaysNetFlow | czCurrency }}
+                        </span>
+                        <span class="text-muted-color text-sm">
+                            Výnosy/Náklady: {{ stats.last30DaysNetExpense | czCurrency }}
+                        </span>
                     </div>
-                    <span class="text-muted-color text-sm block"> Příjmy: {{ stats.last30DaysTotalInflow | number: '1.2-2' }} </span>
-                    <span class="text-muted-color text-sm block"> Výdaje: {{ stats.last30DaysTotalOutflow | number: '1.2-2' }} </span>
-                    <span class="text-muted-color text-sm block mt-2"> Počet pohybů: {{ stats.movementsCount }} </span>
-                    <span class="text-muted-color text-sm" *ngIf="stats.lastMovementDate"> Poslední pohyb: {{ stats.lastMovementDate | czDateFormatter }} </span>
+
+                    <!-- Příjmy vs. výdaje za 30 dní -->
+                    <div class="mb-2 pb-2 border-b border-surface-200 dark:border-surface-700">
+                        <div class="flex justify-between mb-1">
+                            <div>
+                                <span class="block text-muted-color font-medium mb-1">
+                                    Příjmy vs. výdaje za posledních 30 dnů
+                                </span>
+                                <div class="font-medium text-xl" [ngClass]="getAmountClass(stats.last30DaysNetFlow)">
+                                    {{ stats.last30DaysNetFlow | czCurrency }}
+                                </div>
+                            </div>
+                        </div>
+                        <span class="text-muted-color text-sm block">
+                            Příjmy: {{ stats.last30DaysTotalInflow | czCurrency }}
+                        </span>
+                        <span class="text-muted-color text-sm">
+                            Výdaje: {{ stats.last30DaysTotalOutflow | czCurrency }}
+                        </span>
+                    </div>
+
+                    <!-- Výnosy vs. náklady za 30 dní -->
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <div>
+                                <span class="block text-muted-color font-medium mb-1">
+                                    Výnosy vs. náklady za posledních 30 dnů
+                                </span>
+                                <div class="font-medium text-xl" [ngClass]="getAmountClass(stats.last30DaysNetExpense)">
+                                    {{ stats.last30DaysNetExpense | czCurrency }}
+                                </div>
+                            </div>
+                        </div>
+                        <span class="text-muted-color text-sm block">
+                            Náklady: {{ stats.last30DaysTotalExpense | czCurrency }}
+                        </span>
+                        <span class="text-muted-color text-sm">
+                            Výnosy: {{ stats.last30DaysTotalRevenue | czCurrency }}
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
-    `
-})
+        `
+    })
 export class AccountStatsWidget implements OnChanges {
     @Input() accountId!: number;
 
@@ -118,5 +212,13 @@ export class AccountStatsWidget implements OnChanges {
                 this.loading = false;
             }
         });
+    }
+
+    getAmountClass(amount: number): string {
+        if (amount >= 0) {
+            return 'text-green-600 dark:text-green-400';
+        } else {
+            return 'text-red-600 dark:text-red-400';
+        }
     }
 }

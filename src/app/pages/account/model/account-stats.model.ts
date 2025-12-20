@@ -10,6 +10,7 @@ export interface AccountStatsResponse {
     totalOutflow: number;
     netFlow: number;
     netExpense: number;
+    netTotal: number;
 
     last30DaysTotalExpense: number;
     last30DaysTotalRevenue: number;
@@ -17,6 +18,7 @@ export interface AccountStatsResponse {
     last30DaysTotalOutflow: number;
     last30DaysNetFlow: number;
     last30DaysNetExpense: number;
+    last30DaysNetTotal: number;
 
     movementsCount: number;
     lastMovementDate: string | null; // LocalDate z BE jako ISO string
