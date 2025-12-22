@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { Account } from './account.model';
 import { ApiEndpoints } from '@/api/api-endpoints';
 import { AccountStatsResponse } from '@/pages/account/model/account-stats.model';
+import { ImportResult } from '@/pages/account/movement-import-result.model';
 
 @Injectable({
     providedIn: 'root'
@@ -37,5 +38,11 @@ export class AccountService {
 
     delete(id: number): Observable<void> {
         return this.http.delete<void>(ApiEndpoints.Account.byId(id));
+    }
+
+    importMovements(id: number, file: File): Observable<ImportResult> {
+        const formData = new FormData();
+        formData.append('file', file);
+        return this.http.post<ImportResult>(ApiEndpoints.Account.import(id), formData);
     }
 }

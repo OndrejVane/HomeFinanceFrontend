@@ -6,18 +6,45 @@ import { MovementTableComponent } from './components/movement-table.component';
 import { AccountStatsWidget } from '@/pages/account/components/account-stats.widget';
 import { AccountService } from '@/pages/account/account.service';
 import { Account } from '@/pages/account/account.model';
+import { AccountImportBasicComponent } from '@/pages/account/components/movement-import-basic.component';
 
 @Component({
     selector: 'app-account-crud',
     standalone: true,
-    imports: [CommonModule, MovementTableComponent, AccountStatsWidget],
+    imports: [CommonModule, MovementTableComponent, AccountStatsWidget, AccountImportBasicComponent],
     template: `
         <div class="card">
             <!-- Hlavička rozbalovací karty -->
-            <div class="flex items-center justify-between cursor-pointer mb-3" (click)="statsCollapsed = !statsCollapsed">
-                <h2 class="mb-3">{{ account?.name }}</h2>
-                <i class="pi" [ngClass]="statsCollapsed ? 'pi-chevron-down' : 'pi-chevron-up'"></i>
+            <div class="flex items-center justify-between mb-3">
+                <!-- LEVÁ ČÁST – název účtu -->
+                <h2 class="mb-0">
+                    {{ account?.name }}
+                </h2>
+
+                <!-- PRAVÁ ČÁST – tlačítko + rozbalení -->
+                <div class="flex items-center gap-2">
+                    <button
+                        type="button"
+                        class="p-button p-component p-button-sm"
+                        (click)="toggleImport($event)"
+                    >
+                        <span class="p-button-label">Import pohybů</span>
+                    </button>
+
+                    <i
+                        class="pi cursor-pointer text-xl"
+                        [ngClass]="statsCollapsed ? 'pi-chevron-down' : 'pi-chevron-up'"
+                        (click)="statsCollapsed = !statsCollapsed"
+                    ></i>
+                </div>
             </div>
+
+            <!-- Panel s importem pohybů -->
+            <app-account-import-basic
+                *ngIf="accountId !== null && showImport"
+                [accountId]="accountId!"
+                (completed)="onMovementsChanged()"
+            ></app-account-import-basic>
 
             <!-- Tělo karty – celý komponent se statistikami -->
             <div *ngIf="!statsCollapsed">
@@ -42,6 +69,9 @@ export class AccountPage implements OnInit {
     // stav rozbalení celé karty se statistikami
     statsCollapsed = false;
 
+    // stav zobrazení panelu pro import pohybů
+    showImport = false;
+
     constructor(
         private route: ActivatedRoute,
         private accountService: AccountService
@@ -60,6 +90,12 @@ export class AccountPage implements OnInit {
                 }
             });
         }
+    }
+
+    toggleImport(event: MouseEvent): void {
+        // ochrana pro případ, že by tlačítko někdy bylo uvnitř klikací hlavičky
+        event.stopPropagation();
+        this.showImport = !this.showImport;
     }
 
     onMovementsChanged(): void {
