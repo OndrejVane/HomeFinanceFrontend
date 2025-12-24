@@ -307,6 +307,10 @@ export class MovementTableComponent implements OnInit {
         this.movementService.getMovements(this.accountId, page, size).subscribe({
             next: (pageData) => {
                 this.movements = pageData.content;
+
+                // seřadit podle id vzestupně
+                this.movements.sort((a, b) => a.id - b.id);
+
                 this.totalRecords = pageData.totalElements;
                 this.loading = false;
 
