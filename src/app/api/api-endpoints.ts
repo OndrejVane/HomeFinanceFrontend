@@ -21,5 +21,10 @@ export const ApiEndpoints = {
     Movement: {
         base: '/movement',
         byId: (id: number | string) => `/movement/${id}`,
+    },
+
+    MovementTag: {
+        base: '/movement-tag',
+        byId: (id: number | string) => `/movement-tag/${id}`,
     }
 } as const;

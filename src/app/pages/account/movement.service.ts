@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiEndpoints } from '@/api/api-endpoints';
+import { MovementTag } from '@/pages/account/model/movement-tag.model';
 
 export interface MovementResponse {
     id: number;
@@ -12,6 +13,8 @@ export interface MovementResponse {
     hash: string;
     accountId: number;
     imported: boolean;
+    movementTagId: number;
+    movementTag: MovementTag;
 }
 
 export interface Page<T> {
