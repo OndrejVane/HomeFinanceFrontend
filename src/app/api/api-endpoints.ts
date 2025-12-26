@@ -21,6 +21,12 @@ export const ApiEndpoints = {
     Movement: {
         base: '/movement',
         byId: (id: number | string) => `/movement/${id}`,
+        monthlyWithParams: (year: number, month: number, type: string, accountId?: number | string): string => {
+            const base = `/movement/stats/monthly?year=${encodeURIComponent(year)}&month=${encodeURIComponent(month)}&type=${encodeURIComponent(type)}`;
+            return accountId != null
+                ? `${base}&accountId=${encodeURIComponent(accountId)}`
+                : base;
+        }
     },
 
     MovementTag: {
