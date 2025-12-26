@@ -5,29 +5,41 @@ import { ChartModule } from 'primeng/chart';
 import { HttpClient } from '@angular/common/http';
 import { ApiEndpoints } from '@/api/api-endpoints';
 import { MovementMonthlyStatsResponse } from '@/pages/account/model/movement-monthly-stats.model';
+import { SelectModule } from 'primeng/select';
 
 @Component({
     selector: 'app-monthly-stats-pie',
     standalone: true,
-    imports: [CommonModule, FormsModule, ChartModule],
+    imports: [CommonModule, FormsModule, ChartModule, SelectModule],
     template: `
         <div class="card">
             <div class="flex flex-wrap items-end gap-4 mb-4">
                 <div class="flex flex-col gap-1">
                     <label for="year" class="font-semibold">Rok</label>
-                    <select id="year" class="p-inputtext p-component" [(ngModel)]="selectedYear" (change)="loadData()">
-                        <option *ngFor="let y of years" [value]="y">{{ y }}</option>
-                    </select>
+                    <p-select
+                        inputId="year"
+                        [options]="years"
+                        [(ngModel)]="selectedYear"
+                        (onChange)="loadData()"
+                        [showClear]="false"
+                        [placeholder]="'Vyberte rok'"
+                        [style]="{ minWidth: '10rem' }"
+                    ></p-select>
                 </div>
 
                 <div class="flex flex-col gap-1">
                     <label for="month" class="font-semibold">Měsíc</label>
-                    <select id="month" class="p-inputtext p-component" [(ngModel)]="selectedMonth"
-                            (change)="loadData()">
-                        <option *ngFor="let m of months" [value]="m.value">
-                            {{ m.label }}
-                        </option>
-                    </select>
+                    <p-select
+                        inputId="month"
+                        [options]="months"
+                        optionLabel="label"
+                        optionValue="value"
+                        [(ngModel)]="selectedMonth"
+                        (onChange)="loadData()"
+                        [showClear]="false"
+                        [placeholder]="'Vyberte měsíc'"
+                        [style]="{ minWidth: '10rem' }"
+                    ></p-select>
                 </div>
             </div>
 
