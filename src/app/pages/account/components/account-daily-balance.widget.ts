@@ -88,44 +88,71 @@ export class DailyBalanceChartComponent implements OnChanges, OnDestroy {
         );
 
         const documentStyle = getComputedStyle(document.documentElement);
+        const textColor = documentStyle.getPropertyValue('--text-color');
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
         const primaryColor = documentStyle.getPropertyValue('--p-primary-500');
 
-        const labels = sorted.map((d) => d.date); // případně zde formátovat datum
+        const labels = sorted.map((d) => d.date);
         const balances = sorted.map((d) => d.balance);
+
+        // Vytvoření jemného gradientu pod křivkou
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        let gradientFill: CanvasGradient | undefined;
+        if (ctx) {
+            gradientFill = ctx.createLinearGradient(0, 0, 0, 300);
+            gradientFill.addColorStop(0, primaryColor + 'CC'); // více neprůhledné nahoře
+            gradientFill.addColorStop(1, primaryColor + '00'); // úplně průhledné dole
+        }
 
         this.chartData = {
             labels,
             datasets: [
                 {
-                    label: 'Bilance (CZK)', // nebo měnu dle potřeby
+                    label: 'Bilance',
                     data: balances,
-                    fill: false,
                     borderColor: primaryColor,
-                    backgroundColor: primaryColor,
-                    tension: 0.3,
+                    backgroundColor: gradientFill ?? primaryColor + '33',
+                    fill: true,                // area graf pod čarou
+                    tension: 0.35,             // hladší průběh
                     pointRadius: 3,
-                    pointHoverRadius: 5
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: primaryColor,
+                    pointBorderWidth: 0,
+                    hitRadius: 10              // snazší trefení myší
                 }
             ]
         };
 
         this.chartOptions = {
             maintainAspectRatio: false,
-            aspectRatio: 0.8,
+            responsive: true,
             plugins: {
                 legend: {
-                    display: false,
+                    display: false  // legenda skrytá
                 },
                 tooltip: {
+                    displayColors: false,
                     callbacks: {
+                        title: (items: any[]) => {
+                            const rawDate = items[0]?.label;
+                            if (!rawDate) {
+                                return '';
+                            }
+                            const d = new Date(rawDate);
+                            return d.toLocaleDateString('cs-CZ', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                            });
+                        },
                         label: (context: any) => {
                             const value = context.parsed.y;
-                            return `Bilance: ${value.toLocaleString('cs-CZ', {
+                            return value.toLocaleString('cs-CZ', {
                                 style: 'currency',
                                 currency: 'CZK'
-                            })}`;
+                            });
                         }
                     }
                 }
@@ -133,9 +160,22 @@ export class DailyBalanceChartComponent implements OnChanges, OnDestroy {
             scales: {
                 x: {
                     ticks: {
-                        color: textColorSecondary
+                        color: textColorSecondary,
+                        maxRotation: 0,
+                        autoSkip: true,
+                        autoSkipPadding: 10,
+                        callback: (value: any, index: number) => {
+                            const rawDate = labels[index];
+                            const d = new Date(rawDate);
+                            // kratší formát pro osu
+                            return d.toLocaleDateString('cs-CZ', {
+                                day: '2-digit',
+                                month: '2-digit'
+                            });
+                        }
                     },
                     grid: {
+                        display: true,      // ← zpět zapnuté kolmé čáry
                         color: surfaceBorder,
                         drawBorder: false
                     }
@@ -152,8 +192,15 @@ export class DailyBalanceChartComponent implements OnChanges, OnDestroy {
                     },
                     grid: {
                         color: surfaceBorder,
+                        borderDash: [4, 4],   // jemně čárkovaná mřížka
                         drawBorder: false
                     }
+                }
+            },
+            // zvýraznění nuly (pokud pracuješ se silně zápornými/kladnými hodnotami)
+            elements: {
+                line: {
+                    borderWidth: 2
                 }
             }
         };
