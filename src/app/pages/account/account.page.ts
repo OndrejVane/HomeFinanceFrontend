@@ -40,7 +40,8 @@ import { MonthlyStatsPieComponent } from '@/pages/account/components/movement-mo
                 <app-stats-widget *ngIf="accountId !== null" [accountId]="accountId!"></app-stats-widget>
             </div>
 
-            <app-monthly-stats-pie></app-monthly-stats-pie>
+            <!-- Měsíční koláčové grafy: vlevo náklady, vpravo výnosy -->
+            <app-monthly-stats-pie *ngIf="accountId !== null" [accountId]="accountId!"></app-monthly-stats-pie>
         </div>
 
         <div class="card mt-4">
