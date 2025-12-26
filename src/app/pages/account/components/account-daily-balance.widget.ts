@@ -88,22 +88,24 @@ export class DailyBalanceChartComponent implements OnChanges, OnDestroy {
         );
 
         const documentStyle = getComputedStyle(document.documentElement);
-        const textColor = documentStyle.getPropertyValue('--text-color');
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-        const primaryColor = documentStyle.getPropertyValue('--p-primary-500');
+
+        const green = documentStyle.getPropertyValue('--p-green-500') || '#22c55e';
+        const red = documentStyle.getPropertyValue('--p-red-500') || '#ef4444';
+        const neutral = documentStyle.getPropertyValue('--p-primary-400') || '#60a5fa';
 
         const labels = sorted.map((d) => d.date);
         const balances = sorted.map((d) => d.balance);
 
-        // Vytvoření jemného gradientu pod křivkou
+        // Jemný gradient pro vyplnění pod křivkou (základní barva neutrální)
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         let gradientFill: CanvasGradient | undefined;
         if (ctx) {
             gradientFill = ctx.createLinearGradient(0, 0, 0, 300);
-            gradientFill.addColorStop(0, primaryColor + 'CC'); // více neprůhledné nahoře
-            gradientFill.addColorStop(1, primaryColor + '00'); // úplně průhledné dole
+            gradientFill.addColorStop(0, neutral + 'CC'); // nahoře trochu průhledné
+            gradientFill.addColorStop(1, neutral + '00'); // dole úplně průhledné
         }
 
         this.chartData = {
@@ -112,15 +114,49 @@ export class DailyBalanceChartComponent implements OnChanges, OnDestroy {
                 {
                     label: 'Bilance',
                     data: balances,
-                    borderColor: primaryColor,
-                    backgroundColor: gradientFill ?? primaryColor + '33',
-                    fill: true,                // area graf pod čarou
-                    tension: 0.35,             // hladší průběh
+                    borderWidth: 2,
+                    // fallback barvy (když segment callback nepoběží)
+                    borderColor: neutral,
+                    backgroundColor: gradientFill ?? neutral + '33',
+                    fill: true,
+                    tension: 0.35,
                     pointRadius: 3,
                     pointHoverRadius: 6,
-                    pointBackgroundColor: primaryColor,
+                    pointBackgroundColor: neutral,
                     pointBorderWidth: 0,
-                    hitRadius: 10              // snazší trefení myší
+                    hitRadius: 10,
+                    // Dynamické barvy jednotlivých úseků (segmentů)
+                    segment: {
+                        borderColor: (ctx: any) => {
+                            const p0 = ctx.p0?.parsed?.y;
+                            const p1 = ctx.p1?.parsed?.y;
+                            if (p0 == null || p1 == null) {
+                                return neutral;
+                            }
+                            if (p1 > p0) {
+                                return green; // roste
+                            }
+                            if (p1 < p0) {
+                                return red; // klesá
+                            }
+                            return neutral; // beze změny
+                        },
+                        backgroundColor: (ctx: any) => {
+                            // lehčí barva do výplně podle směru
+                            const p0 = ctx.p0?.parsed?.y;
+                            const p1 = ctx.p1?.parsed?.y;
+                            if (p0 == null || p1 == null) {
+                                return gradientFill ?? neutral + '22';
+                            }
+                            if (p1 > p0) {
+                                return green + '22';
+                            }
+                            if (p1 < p0) {
+                                return red + '22';
+                            }
+                            return neutral + '22';
+                        }
+                    }
                 }
             ]
         };
@@ -130,7 +166,7 @@ export class DailyBalanceChartComponent implements OnChanges, OnDestroy {
             responsive: true,
             plugins: {
                 legend: {
-                    display: false  // legenda skrytá
+                    display: false
                 },
                 tooltip: {
                     displayColors: false,
