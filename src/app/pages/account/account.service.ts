@@ -6,6 +6,7 @@ import { Account } from './account.model';
 import { ApiEndpoints } from '@/api/api-endpoints';
 import { AccountStatsResponse } from '@/pages/account/model/account-stats.model';
 import { ImportResult } from '@/pages/account/movement-import-result.model';
+import { DailyAccountStat } from '@/pages/account/model/account-daily-stats.model';
 
 @Injectable({
     providedIn: 'root'
@@ -44,5 +45,9 @@ export class AccountService {
         const formData = new FormData();
         formData.append('file', file);
         return this.http.post<ImportResult>(ApiEndpoints.Account.import(id), formData);
+    }
+
+    getDailyBalance(accountId: number | string): Observable<DailyAccountStat[]> {
+        return this.http.get<DailyAccountStat[]>(ApiEndpoints.Account.dailyBalance(accountId));
     }
 }

@@ -200,7 +200,7 @@ export class MonthlyStatsPieComponent implements OnInit {
                         usePointStyle: true,
                         color: textColor
                     },
-                    position: 'top'
+                    position: 'right'
                 },
                 tooltip: {
                     callbacks: {
