@@ -10,6 +10,7 @@ import { ToastModule } from 'primeng/toast';
 import { AccountService } from '@/pages/account/account.service';
 import { CurrencyService } from '@/pages/currency/currency.service';
 import { Account } from '@/pages/account/account.model';
+import { ImportType } from '@/pages/account/model/account-import-type.model';
 
 @Component({
     selector: 'app-account-create',
@@ -41,6 +42,18 @@ import { Account } from '@/pages/account/account.model';
                 </div>
 
                 <div class="mb-3">
+                    <label class="block mb-1 font-medium">Import type</label>
+                    <p-select
+                        [options]="importTypeOptions"
+                        [(ngModel)]="account.importType"
+                        optionLabel="label"
+                        optionValue="value"
+                        placeholder="Select import type"
+                        appendTo="body">
+                    </p-select>
+                </div>
+
+                <div class="mb-3">
                     <label class="block mb-1 font-medium">Initial Balance</label>
                     <input type="number" pInputText [(ngModel)]="account.initialBalance" />
                 </div>
@@ -62,6 +75,11 @@ export class AccountCreateComponent {
     account: Partial<Account> = {};
     currencies: { id: number; label: string }[] = [];
 
+    importTypeOptions = [
+        { label: 'RB', value: ImportType.RB },
+        { label: 'PARTNERS', value: ImportType.PARTNERS }
+    ];
+
     constructor(
         private accountService: AccountService,
         private currencyService: CurrencyService,
@@ -71,7 +89,9 @@ export class AccountCreateComponent {
     }
 
     showDialog() {
-        this.account = {}; // reset formulář
+        this.account = {
+            importType: ImportType.RB // defaultní hodnota
+        };
         this.displayDialog = true;
     }
 
