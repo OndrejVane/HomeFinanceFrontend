@@ -107,7 +107,7 @@ import { AutoComplete, AutoCompleteSelectEvent } from 'primeng/autocomplete';
                         <p-autoComplete
                             [(ngModel)]="row.movementTag"
                             [suggestions]="filteredMovementTags"
-                            (completeMethod)="filterMovementTags($event)"
+                            (completeMethod)="filterMovementTags($event, row)"
                             [forceSelection]="false"
                             [dropdown]="true"
                             (onSelect)="onMovementTagSelected(row, $event)"
@@ -192,9 +192,15 @@ export class MovementTableComponent implements OnInit {
     }
 
     // Volá se při psaní do p-autoComplete
-    filterMovementTags(event: { query: string }): void {
+    filterMovementTags(event: { query: string }, movement: MovementResponse): void {
         const query = event.query?.toLowerCase() ?? '';
-        this.filteredMovementTags = this.movementTags.filter((tag) => tag.name.toLowerCase().includes(query));
+
+        // podle pohybu zjistíme, zda jde o výdaj (záporný pohyb) nebo příjem
+        const isExpense = this.isMovementExpense(movement);
+
+        this.filteredMovementTags = this.movementTags
+            .filter((tag) => tag.expense === isExpense)
+            .filter((tag) => tag.name.toLowerCase().includes(query));
     }
 
     // Vybrán existující tag ze seznamu
@@ -205,7 +211,7 @@ export class MovementTableComponent implements OnInit {
         if (selectedTag.id != null) {
             movement.movementTagId = selectedTag.id;
             movement.imported = false; // už to není „nový“ pohyb
-            this.saveMovementTagChange(movement, selectedTag);
+            this.saveMovementTagChange(movement);
         }
     }
 
@@ -231,7 +237,7 @@ export class MovementTableComponent implements OnInit {
                     (movement as any).movementTag = existing;      // pro UI
                     movement.movementTagId = existing.id;          // pro BE
                     movement.imported = false;                     // už není nový
-                    this.saveMovementTagChange(movement, existing);
+                    this.saveMovementTagChange(movement);
                 }
                 return;
             }
@@ -250,7 +256,7 @@ export class MovementTableComponent implements OnInit {
                         movement.movementTagId = created.id;
                     }
                     movement.imported = false; // při vytvoření tagu taky shodit
-                    this.saveMovementTagChange(movement, created);
+                    this.saveMovementTagChange(movement);
                     this.messageService.add({
                         severity: 'success',
                         summary: 'Vytvořen tag',
@@ -266,16 +272,11 @@ export class MovementTableComponent implements OnInit {
             });
         }
 
-    private saveMovementTagChange(movement: MovementResponse, tag: MovementTag): void {
+    private saveMovementTagChange(movement: MovementResponse): void {
         // pokud Movement má jen movementTagId:
         if (movement.movementTag.id != null) {
             movement.movementTagId = movement.movementTag.id;
-            console.log("movement.movementTag.id:", movement.movementTag.id);
-            console.log("movement.movementTagId:", movement.movementTagId);
         }
-
-        console.log("saveMovementTagChange", movement, tag);
-        console.log("saveMovementTagChangeTEST", movement.movementTagId);
 
         this.movementService.updateMovement(movement).subscribe({
             next: (updated) => {
