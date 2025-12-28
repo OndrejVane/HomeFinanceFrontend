@@ -9,11 +9,12 @@ import { Account } from '@/pages/account/account.model';
 import { AccountImportBasicComponent } from '@/pages/account/components/movement-import-basic.component';
 import { MonthlyStatsPieComponent } from '@/pages/account/components/movement-monthly-stats.widget';
 import { DailyBalanceChartComponent } from '@/pages/account/components/account-daily-balance.widget';
+import { MovementYearlyStatsWidget } from '@/pages/account/components/movement-yearly-stats.widget';
 
 @Component({
     selector: 'app-account-crud',
     standalone: true,
-    imports: [CommonModule, MovementTableComponent, AccountStatsWidget, AccountImportBasicComponent, MonthlyStatsPieComponent, DailyBalanceChartComponent],
+    imports: [CommonModule, MovementTableComponent, AccountStatsWidget, AccountImportBasicComponent, MonthlyStatsPieComponent, DailyBalanceChartComponent, MovementYearlyStatsWidget],
     template: `
         <div class="card">
             <!-- Hlavička rozbalovací karty -->
@@ -44,9 +45,9 @@ import { DailyBalanceChartComponent } from '@/pages/account/components/account-d
             <!-- Měsíční koláčové grafy: vlevo náklady, vpravo výnosy -->
             <app-monthly-stats-pie *ngIf="accountId !== null" [accountId]="accountId!"></app-monthly-stats-pie>
 
-
             <app-daily-balance-chart [accountId]="accountId"></app-daily-balance-chart>
 
+            <app-movement-yearly-stats [accountId]="accountId"></app-movement-yearly-stats>
         </div>
 
         <div class="card mt-4">

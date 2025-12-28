@@ -27,6 +27,10 @@ export const ApiEndpoints = {
             return accountId != null
                 ? `${base}&accountId=${encodeURIComponent(accountId)}`
                 : base;
+        },
+        yearlyWithParams: (year: number, accountId?: number | null): string => {
+            const base = `/movement/stats/yearly?year=${encodeURIComponent(year)}`;
+            return accountId != null ? `${base}&accountId=${encodeURIComponent(accountId)}` : base;
         }
     },
 

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { ApiEndpoints } from '@/api/api-endpoints';
 import { MovementTag } from '@/pages/account/model/movement-tag.model';
 import { MovementMonthlyStatsResponse } from '@/pages/account/model/movement-monthly-stats.model';
+import { MovementYearlyStats } from '@/pages/account/model/movement-yearly-stats.model';
 
 export interface MovementResponse {
     id: number;
@@ -48,5 +49,10 @@ export class MovementService {
 
     getMonthlyStats(year: number, month: number, type: string, accountId?: number): Observable<MovementMonthlyStatsResponse[]> {
         return this.http.get<MovementMonthlyStatsResponse[]>(ApiEndpoints.Movement.monthlyWithParams(year, month, type, accountId));
+    }
+
+    getYearlyStats(year: number, accountId?: number | null): Observable<MovementYearlyStats[]> {
+        const url = ApiEndpoints.Movement.yearlyWithParams(year, accountId);
+        return this.http.get<MovementYearlyStats[]>(url);
     }
 }
