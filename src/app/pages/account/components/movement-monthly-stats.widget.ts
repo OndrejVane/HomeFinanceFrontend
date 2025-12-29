@@ -3,9 +3,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChartModule } from 'primeng/chart';
 import { HttpClient } from '@angular/common/http';
-import { ApiEndpoints } from '@/api/api-endpoints';
 import { MovementMonthlyStatsResponse } from '@/pages/account/model/movement-monthly-stats.model';
 import { SelectModule } from 'primeng/select';
+import { MovementService } from '@/pages/account/movement.service';
 
 @Component({
     selector: 'app-monthly-stats-pie',
@@ -107,7 +107,7 @@ export class MonthlyStatsPieComponent implements OnInit {
 
     loading = false;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient, private movementService: MovementService) {}
 
     ngOnInit(): void {
         const currentYear = new Date().getFullYear();
@@ -125,15 +125,12 @@ export class MonthlyStatsPieComponent implements OnInit {
 
         this.loading = true;
 
-        const expenseUrl = ApiEndpoints.Movement.monthlyWithParams(this.selectedYear, this.selectedMonth, 'EXPENSE', this.accountId);
-        const incomeUrl = ApiEndpoints.Movement.monthlyWithParams(this.selectedYear, this.selectedMonth, 'REVENUE', this.accountId);
-
         // Načteme náklady a výnosy paralelně
-        this.http.get<MovementMonthlyStatsResponse[]>(expenseUrl).subscribe({
+        this.movementService.getMonthlyStats(this.selectedYear, this.selectedMonth, 'EXPENSE', this.accountId).subscribe({
             next: (expenseData) => {
                 this.chartDataExpense = this.buildChartData(expenseData);
 
-                this.http.get<MovementMonthlyStatsResponse[]>(incomeUrl).subscribe({
+                this.movementService.getMonthlyStats(this.selectedYear, this.selectedMonth, 'REVENUE', this.accountId).subscribe({
                     next: (incomeData) => {
                         this.chartDataIncome = this.buildChartData(incomeData);
                         this.loading = false;
@@ -142,14 +139,14 @@ export class MonthlyStatsPieComponent implements OnInit {
                         this.chartDataIncome = this.buildChartData([]);
                         this.loading = false;
                     }
-                });
+                })
             },
             error: () => {
                 this.chartDataExpense = this.buildChartData([]);
                 this.chartDataIncome = this.buildChartData([]);
                 this.loading = false;
             }
-        });
+        })
     }
 
     private buildChartData(data: MovementMonthlyStatsResponse[]): any {
