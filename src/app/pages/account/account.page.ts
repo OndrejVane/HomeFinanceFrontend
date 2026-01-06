@@ -10,11 +10,12 @@ import { AccountImportBasicComponent } from '@/pages/account/components/movement
 import { MonthlyStatsPieComponent } from '@/pages/account/components/movement-monthly-stats.widget';
 import { DailyBalanceChartComponent } from '@/pages/account/components/account-daily-balance.widget';
 import { MovementYearlyStatsWidget } from '@/pages/account/components/movement-yearly-stats.widget';
+import { MovementCreateWidget } from '@/pages/account/components/movement-create.widget';
 
 @Component({
     selector: 'app-account-crud',
     standalone: true,
-    imports: [CommonModule, MovementTableComponent, AccountStatsWidget, AccountImportBasicComponent, MonthlyStatsPieComponent, DailyBalanceChartComponent, MovementYearlyStatsWidget],
+    imports: [CommonModule, MovementTableComponent, AccountStatsWidget, AccountImportBasicComponent, MonthlyStatsPieComponent, DailyBalanceChartComponent, MovementYearlyStatsWidget, MovementCreateWidget],
     template: `
         <div class="card">
             <!-- Hlavička rozbalovací karty -->
@@ -36,6 +37,8 @@ import { MovementYearlyStatsWidget } from '@/pages/account/components/movement-y
 
             <!-- Panel s importem pohybů -->
             <app-account-import-basic *ngIf="accountId !== null && showImport" [accountId]="accountId!" (completed)="onMovementsChanged()"></app-account-import-basic>
+
+            <app-movement-create [accountIdInput]="accountId!" (movementCreated)="onMovementsChanged()"></app-movement-create>
 
             <!-- Tělo karty – celý komponent se statistikami -->
             <div *ngIf="!statsCollapsed">

@@ -11,12 +11,13 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { MovementService, MovementResponse } from '../movement.service';
+import { MovementService } from '../movement.service';
 import { CzCurrencyPipe } from '@/pages/currency/formaters/cz-currency-formatter';
 import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
 import { MovementTag } from '@/pages/account/model/movement-tag.model';
 import { MovementTagService } from '@/pages/account/movement-tag.service';
 import { AutoComplete, AutoCompleteSelectEvent } from 'primeng/autocomplete';
+import { MovementResponse } from '@/pages/account/model/movement-response.model';
 
 @Component({
     selector: 'app-movement-table',
