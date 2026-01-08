@@ -11,11 +11,12 @@ import { MonthlyStatsPieComponent } from '@/pages/account/components/movement-mo
 import { DailyBalanceChartComponent } from '@/pages/account/components/account-daily-balance.widget';
 import { MovementYearlyStatsWidget } from '@/pages/account/components/movement-yearly-stats.widget';
 import { MovementCreateWidget } from '@/pages/account/components/movement-create.widget';
+import { MovementBalanceAdjustWidget } from '@/pages/account/components/movement-balance-adjust.widget';
 
 @Component({
     selector: 'app-account-crud',
     standalone: true,
-    imports: [CommonModule, MovementTableComponent, AccountStatsWidget, AccountImportBasicComponent, MonthlyStatsPieComponent, DailyBalanceChartComponent, MovementYearlyStatsWidget, MovementCreateWidget],
+    imports: [CommonModule, MovementTableComponent, AccountStatsWidget, AccountImportBasicComponent, MonthlyStatsPieComponent, DailyBalanceChartComponent, MovementYearlyStatsWidget, MovementCreateWidget, MovementBalanceAdjustWidget],
     template: `
         <div class="card">
             <!-- Hlavička rozbalovací karty -->
@@ -38,7 +39,11 @@ import { MovementCreateWidget } from '@/pages/account/components/movement-create
             <!-- Panel s importem pohybů -->
             <app-account-import-basic *ngIf="accountId !== null && showImport" [accountId]="accountId!" (completed)="onMovementsChanged()"></app-account-import-basic>
 
-            <app-movement-create [accountIdInput]="accountId!" (movementCreated)="onMovementsChanged()"></app-movement-create>
+            <div class="flex gap-2 items-center mb-3">
+                <app-movement-create [accountIdInput]="accountId!" (movementCreated)="onMovementsChanged()"></app-movement-create>
+
+                <app-movement-balance-adjust *ngIf="accountId !== null" [accountIdInput]="accountId!" [currentBalanceInput]="account?.currentBalance ?? 0" (movementCreated)="onMovementsChanged()"></app-movement-balance-adjust>
+            </div>
 
             <!-- Tělo karty – celý komponent se statistikami -->
             <div *ngIf="!statsCollapsed">
