@@ -84,6 +84,7 @@ export class MonthlyStatsPieComponent implements OnInit {
 
     years: number[] = [];
     months = [
+        { value: null, label: 'Celý rok' },
         { value: 1, label: 'Leden' },
         { value: 2, label: 'Únor' },
         { value: 3, label: 'Březen' },
@@ -99,7 +100,7 @@ export class MonthlyStatsPieComponent implements OnInit {
     ];
 
     selectedYear!: number;
-    selectedMonth: number = new Date().getMonth() + 1;
+    selectedMonth: number | null = new Date().getMonth() + 1;
 
     chartDataExpense: any;
     chartDataIncome: any;
@@ -213,4 +214,3 @@ export class MonthlyStatsPieComponent implements OnInit {
         };
     }
 }
-
