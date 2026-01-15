@@ -184,7 +184,10 @@ export class MovementBalanceAdjustWidget {
             return;
         }
 
-        this.difference = this.newRealBalance - this.currentBalanceInput;
+        const rawDifference = this.newRealBalance - this.currentBalanceInput;
+
+        // zaokrouhlení na 2 desetinná místa – odstraní 23.000000000014 apod.
+        this.difference = Number(rawDifference.toFixed(2));
 
         // automatické předvyplnění typu – můžeš vypnout, pokud chceš, aby to volil jen uživatel
         if (this.difference > 0) {
