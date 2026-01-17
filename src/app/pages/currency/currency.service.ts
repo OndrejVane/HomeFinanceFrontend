@@ -13,6 +13,10 @@ export class CurrencyService {
         return this.http.get<Currency[]>(ApiEndpoints.Currency.base);
     }
 
+    getCurrency(id: number): Observable<Currency> {
+        return this.http.get<Currency>(ApiEndpoints.Currency.byId(id));
+    }
+
     create(currency: Currency): Observable<Currency> {
         return this.http.post<Currency>(ApiEndpoints.Currency.base, currency);
     }

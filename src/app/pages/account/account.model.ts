@@ -6,5 +6,6 @@ export interface Account {
     currency: number;
     importType: string;
     currentBalance: number;
+    currentBalanceCzk: number;
     last30DaysBalance: number;
 }
