@@ -202,14 +202,13 @@ export class MovementBalanceAdjustWidget {
             return;
         }
 
-        const absAmount = Math.abs(this.difference);
 
         const movement: MovementCreateRequest = {
             accountId: this.accountIdInput,
             date: this.date,
             description: this.description || 'Úprava zůstatku',
             type: this.movementType,
-            amount: absAmount,
+            amount: this.difference,
             imported: false
         };
 
