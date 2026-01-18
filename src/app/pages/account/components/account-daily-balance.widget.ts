@@ -115,17 +115,38 @@ export class DailyBalanceChartComponent implements OnChanges, OnDestroy {
                     label: 'Bilance',
                     data: balances,
                     borderWidth: 2,
-                    // fallback barvy (když segment callback nepoběží)
                     borderColor: neutral,
                     backgroundColor: gradientFill ?? neutral + '33',
                     fill: true,
                     tension: 0.35,
-                    pointRadius: 3,
+
+                    pointRadius: 4,
                     pointHoverRadius: 6,
-                    pointBackgroundColor: neutral,
                     pointBorderWidth: 0,
+
+                    pointBackgroundColor: (ctx: any) => {
+                        const index = ctx.dataIndex;
+
+                        // první bod – nemá předchozí
+                        if (index === 0) {
+                            return neutral;
+                        }
+
+                        const prev = balances[index - 1];
+                        const curr = balances[index];
+
+                        if (curr > prev) {
+                            return green;   // bilance roste
+                        }
+                        if (curr < prev) {
+                            return red;     // bilance klesá
+                        }
+
+                        return neutral;     // beze změny
+                    },
+
                     hitRadius: 10,
-                    // Dynamické barvy jednotlivých úseků (segmentů)
+
                     segment: {
                         borderColor: (ctx: any) => {
                             const p0 = ctx.p0?.parsed?.y;
