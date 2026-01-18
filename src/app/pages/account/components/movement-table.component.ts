@@ -12,20 +12,22 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { MovementService } from '../movement.service';
-import { CzCurrencyPipe } from '@/pages/currency/formaters/cz-currency-formatter';
 import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
 import { MovementTag } from '@/pages/account/model/movement-tag.model';
 import { MovementTagService } from '@/pages/account/movement-tag.service';
 import { AutoComplete, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { MovementResponse } from '@/pages/account/model/movement-response.model';
+import { CzkCurrencyPipe } from '@/pages/currency/formaters/currency/cz-currency-formatter';
 
 @Component({
     selector: 'app-movement-table',
     standalone: true,
-    imports: [CommonModule, FormsModule, TableModule, InputTextModule, InputNumberModule, ButtonModule, Select, CzCurrencyPipe, CzDateFormatter, Tag, ConfirmDialogModule, TranslateModule, AutoComplete],
+    imports: [CommonModule, FormsModule, TableModule, InputTextModule, InputNumberModule, ButtonModule, Select, CzkCurrencyPipe, CzDateFormatter, Tag, ConfirmDialogModule, TranslateModule, AutoComplete],
     providers: [ConfirmationService, MessageService],
     template: `
-        <p-table [value]="movements" [lazy]="true" [lazyLoadOnInit]="true" [paginator]="true" [rows]="20" [totalRecords]="totalRecords" [loading]="loading" dataKey="id" editMode="row" (onLazyLoad)="loadMovements($event)">
+        <p-table [value]="movements" [lazy]="true" [lazyLoadOnInit]="true" [paginator]="true" [rows]="20"
+                 [totalRecords]="totalRecords" [loading]="loading" dataKey="id" editMode="row"
+                 (onLazyLoad)="loadMovements($event)">
             <ng-template pTemplate="header">
                 <tr>
                     <th>Date</th>
@@ -97,7 +99,7 @@ import { MovementResponse } from '@/pages/account/model/movement-response.model'
                             </ng-template>
                             <ng-template pTemplate="output">
                                 <span [ngClass]="getAmountClass(row.type)">
-                                    {{ row.amount | czCurrency }}
+                                    {{ row.amount | czkCurrency }}
                                 </span>
                             </ng-template>
                         </p-cellEditor>
@@ -122,7 +124,8 @@ import { MovementResponse } from '@/pages/account/model/movement-response.model'
 
                     <!-- Actions -->
                     <td class="text-center">
-                        <p-button (click)="confirmDelete(row)" icon="pi pi-times" severity="danger" text raised rounded></p-button>
+                        <p-button (click)="confirmDelete(row)" icon="pi pi-times" severity="danger" text raised
+                                  rounded></p-button>
                     </td>
                 </tr>
             </ng-template>

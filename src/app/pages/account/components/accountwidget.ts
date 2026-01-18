@@ -1,15 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Account } from '@/pages/account/account.model';
-import { CzCurrencyPipe } from '@/pages/currency/formaters/cz-currency-formatter';
 import { Router } from '@angular/router';
-import { UsdCurrencyPipe } from '@/pages/currency/formaters/usd-currency-formatter';
-import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatter';
+import { CzkCurrencyPipe } from '@/pages/currency/formaters/currency/cz-currency-formatter';
+import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency/currency-formatter';
 
 @Component({
     standalone: true,
     selector: 'app-account-widget',
-    imports: [CommonModule, CzCurrencyPipe, CurrencyFormatPipe],
+    imports: [CommonModule, CzkCurrencyPipe, CurrencyFormatPipe, CzkCurrencyPipe],
     template: `
         <div class="card mb-0 relative cursor-pointer transition-shadow duration-200 hover:shadow-lg" (click)="goToDetail()">
             <div class="flex justify-between mb-4">
@@ -18,7 +17,7 @@ import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatte
                         {{ account.name }}
                     </span>
                     <div class="font-medium text-xl" [ngClass]="balanceColor">
-                        {{ account.currentBalanceCzk | czCurrency }}
+                        {{ account.currentBalanceCzk | czkCurrency }}
                         <!-- TODO: udělat formátování podlě měny-->
                     </div>
                     <div class="font-medium text-sm" [ngClass]="balanceColor">

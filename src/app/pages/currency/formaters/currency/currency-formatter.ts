@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CzCurrencyPipe } from './cz-currency-formatter';
+import { CzkCurrencyPipe } from './cz-currency-formatter';
 import { UsdCurrencyPipe } from './usd-currency-formatter';
-import { EurCurrencyPipe } from '@/pages/currency/formaters/eur-currency-formatter';
-import { BtcCurrencyPipe } from '@/pages/currency/formaters/btc-currency-formatter';
-import { EthCurrencyPipe } from '@/pages/currency/formaters/eth-currency-formatter';
+import { EurCurrencyPipe } from '@/pages/currency/formaters/currency/eur-currency-formatter';
+import { BtcCurrencyPipe } from '@/pages/currency/formaters/currency/btc-currency-formatter';
+import { EthCurrencyPipe } from '@/pages/currency/formaters/currency/eth-currency-formatter';
 
 @Pipe({
     name: 'currencyFormat',
@@ -11,7 +11,7 @@ import { EthCurrencyPipe } from '@/pages/currency/formaters/eth-currency-formatt
 })
 export class CurrencyFormatPipe implements PipeTransform {
     constructor(
-        private cz: CzCurrencyPipe,
+        private cz: CzkCurrencyPipe,
         private usd: UsdCurrencyPipe,
         private eur: EurCurrencyPipe,
         private btc: BtcCurrencyPipe,

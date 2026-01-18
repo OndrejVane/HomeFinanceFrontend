@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { AccountStatsResponse } from '@/pages/account/model/account-stats.model';
 import { AccountService } from '@/pages/account/account.service';
 import { CzDateFormatter } from '@/pages/currency/formaters/cz-date-formatter';
-import { CzCurrencyPipe } from '@/pages/currency/formaters/cz-currency-formatter';
 import { Account } from '@/pages/account/account.model';
-import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatter';
+import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency/currency-formatter';
+import { CzkCurrencyPipe } from '@/pages/currency/formaters/currency/cz-currency-formatter';
 
 
 @Component({
     standalone: true,
     selector: 'app-stats-widget',
-    imports: [CommonModule, CzDateFormatter, CzCurrencyPipe, CurrencyFormatPipe],
+    imports: [CommonModule, CzDateFormatter, CzkCurrencyPipe, CurrencyFormatPipe],
     template: `
         <div *ngIf="loading" class="mb-1">Načítání statistik...</div>
 
@@ -24,11 +24,14 @@ import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatte
 
                 <div>
                     <span class="block text-muted-color font-medium mb-1">Aktuální zůstatek</span>
-                    <div class="text-surface-900 dark:text-surface-0 font-medium text-3xl" [ngClass]="getAmountClass(stats.currentBalance)">
+                    <div class="text-surface-900 dark:text-surface-0 font-medium text-3xl"
+                         [ngClass]="getAmountClass(stats.currentBalance)">
                         {{ stats.currentBalance | currencyFormat: account.currencyCode }}
                     </div>
-                    <span class="text-muted-color text-sm block mt-1"> Aktuální zůstatek CZK: {{ account.currentBalanceCzk | czCurrency }} </span>
-                    <span class="text-muted-color text-sm block mt-1"> Počáteční zůstatek: {{ stats.initialBalance | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm block mt-1"> Aktuální zůstatek CZK: {{ account.currentBalanceCzk | czkCurrency }} </span>
+                    <span
+                        class="text-muted-color text-sm block mt-1"> Počáteční zůstatek: {{ stats.initialBalance | currencyFormat: account.currencyCode }} </span>
                 </div>
             </div>
 
@@ -39,7 +42,8 @@ import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatte
                 <div>
                     <span class="block text-muted-color font-medium mb-1">Pohyby</span>
                     <span class="text-muted-color text-sm block"> Počet pohybů: {{ stats.movementsCount }} </span>
-                    <span class="text-muted-color text-sm block" *ngIf="stats.lastMovementDate"> Poslední pohyb: {{ stats.lastMovementDate | czDateFormatter }} </span>
+                    <span class="text-muted-color text-sm block"
+                          *ngIf="stats.lastMovementDate"> Poslední pohyb: {{ stats.lastMovementDate | czDateFormatter }} </span>
                 </div>
             </div>
 
@@ -57,8 +61,10 @@ import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatte
                             </div>
                         </div>
                     </div>
-                    <span class="text-muted-color text-sm block"> Příjmy/Výdaje: {{ stats.netFlow | currencyFormat: account.currencyCode }} </span>
-                    <span class="text-muted-color text-sm"> Výnosy/Náklady: {{ stats.netExpense | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm block"> Příjmy/Výdaje: {{ stats.netFlow | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm"> Výnosy/Náklady: {{ stats.netExpense | currencyFormat: account.currencyCode }} </span>
                 </div>
 
                 <!-- Celkové příjmy vs. výdaje -->
@@ -71,8 +77,10 @@ import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatte
                             </div>
                         </div>
                     </div>
-                    <span class="text-muted-color text-sm block"> Příjmy: {{ stats.totalInflow | currencyFormat: account.currencyCode }} </span>
-                    <span class="text-muted-color text-sm"> Výdaje: {{ stats.totalOutflow | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm block"> Příjmy: {{ stats.totalInflow | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm"> Výdaje: {{ stats.totalOutflow | currencyFormat: account.currencyCode }} </span>
                 </div>
 
                 <!-- Celkové výnosy vs. náklady -->
@@ -85,8 +93,10 @@ import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatte
                             </div>
                         </div>
                     </div>
-                    <span class="text-muted-color text-sm block"> Náklady: {{ stats.totalExpense | currencyFormat: account.currencyCode }} </span>
-                    <span class="text-muted-color text-sm"> Výnosy: {{ stats.totalRevenue | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm block"> Náklady: {{ stats.totalExpense | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm"> Výnosy: {{ stats.totalRevenue | currencyFormat: account.currencyCode }} </span>
                 </div>
             </div>
 
@@ -98,14 +108,17 @@ import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatte
                 <div class="mb-2 pb-2 border-b border-surface-200 dark:border-surface-700">
                     <div class="flex justify-between mb-1">
                         <div>
-                            <span class="block text-muted-color font-medium mb-1"> Celkové pohyby za posledních 30 dnů </span>
+                            <span
+                                class="block text-muted-color font-medium mb-1"> Celkové pohyby za posledních 30 dnů </span>
                             <div class="font-medium text-xl" [ngClass]="getAmountClass(stats.last30DaysNetTotal)">
                                 {{ stats.last30DaysNetTotal | currencyFormat: account.currencyCode }}
                             </div>
                         </div>
                     </div>
-                    <span class="text-muted-color text-sm block"> Příjmy/Výdaje: {{ stats.last30DaysNetFlow | currencyFormat: account.currencyCode }} </span>
-                    <span class="text-muted-color text-sm"> Výnosy/Náklady: {{ stats.last30DaysNetExpense | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm block"> Příjmy/Výdaje: {{ stats.last30DaysNetFlow | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm"> Výnosy/Náklady: {{ stats.last30DaysNetExpense | currencyFormat: account.currencyCode }} </span>
                 </div>
 
                 <!-- Příjmy vs. výdaje za 30 dní -->
@@ -118,8 +131,10 @@ import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatte
                             </div>
                         </div>
                     </div>
-                    <span class="text-muted-color text-sm block"> Příjmy: {{ stats.last30DaysTotalInflow | currencyFormat: account.currencyCode }} </span>
-                    <span class="text-muted-color text-sm"> Výdaje: {{ stats.last30DaysTotalOutflow | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm block"> Příjmy: {{ stats.last30DaysTotalInflow | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm"> Výdaje: {{ stats.last30DaysTotalOutflow | currencyFormat: account.currencyCode }} </span>
                 </div>
 
                 <!-- Výnosy vs. náklady za 30 dní -->
@@ -132,8 +147,10 @@ import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatte
                             </div>
                         </div>
                     </div>
-                    <span class="text-muted-color text-sm block"> Náklady: {{ stats.last30DaysTotalExpense | currencyFormat: account.currencyCode }} </span>
-                    <span class="text-muted-color text-sm"> Výnosy: {{ stats.last30DaysTotalRevenue | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm block"> Náklady: {{ stats.last30DaysTotalExpense | currencyFormat: account.currencyCode }} </span>
+                    <span
+                        class="text-muted-color text-sm"> Výnosy: {{ stats.last30DaysTotalRevenue | currencyFormat: account.currencyCode }} </span>
                 </div>
             </div>
         </div>
