@@ -47,7 +47,7 @@ import { MovementBalanceAdjustWidget } from '@/pages/account/components/movement
 
             <!-- Tělo karty – celý komponent se statistikami -->
             <div *ngIf="!statsCollapsed">
-                <app-stats-widget *ngIf="accountId !== null" [accountId]="accountId!"></app-stats-widget>
+                <app-stats-widget *ngIf="account !== null" [account]="account!"></app-stats-widget>
             </div>
 
             <!-- Měsíční koláčové grafy: vlevo náklady, vpravo výnosy -->
