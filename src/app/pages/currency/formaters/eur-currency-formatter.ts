@@ -1,14 +1,15 @@
-import { Injectable, Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, Injectable } from '@angular/core';
 
-@Pipe({ name: 'usdCurrency', standalone: true })
+@Pipe({ name: 'eurCurrency', standalone: true })
 @Injectable({ providedIn: 'root' })
-export class UsdCurrencyPipe implements PipeTransform {
+export class EurCurrencyPipe implements PipeTransform {
+
     transform(value: number | undefined): string {
         if (value == null) return '';
 
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('de-DE', {
             style: 'currency',
-            currency: 'USD',
+            currency: 'EUR',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }).format(value);

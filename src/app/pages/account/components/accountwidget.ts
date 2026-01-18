@@ -4,11 +4,12 @@ import { Account } from '@/pages/account/account.model';
 import { CzCurrencyPipe } from '@/pages/currency/formaters/cz-currency-formatter';
 import { Router } from '@angular/router';
 import { UsdCurrencyPipe } from '@/pages/currency/formaters/usd-currency-formatter';
+import { CurrencyFormatPipe } from '@/pages/currency/formaters/currency-formatter';
 
 @Component({
     standalone: true,
     selector: 'app-account-widget',
-    imports: [CommonModule, CzCurrencyPipe, UsdCurrencyPipe],
+    imports: [CommonModule, CzCurrencyPipe, CurrencyFormatPipe],
     template: `
         <div class="card mb-0 relative cursor-pointer transition-shadow duration-200 hover:shadow-lg" (click)="goToDetail()">
             <div class="flex justify-between mb-4">
@@ -21,7 +22,7 @@ import { UsdCurrencyPipe } from '@/pages/currency/formaters/usd-currency-formatt
                         <!-- TODO: udělat formátování podlě měny-->
                     </div>
                     <div class="font-medium text-sm" [ngClass]="balanceColor">
-                        {{ account.currentBalance | usdCurrency }}
+                        {{ account.currentBalance | currencyFormat: account.currencyCode }}
                         <!-- TODO: udělat formátování podlě měny-->
                     </div>
                     <div class="text-muted-color text-sm mt-2">

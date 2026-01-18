@@ -1,6 +1,7 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Injectable, Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({ name: 'czCurrency', standalone: true })
+@Injectable({ providedIn: 'root' })
 export class CzCurrencyPipe implements PipeTransform {
     transform(value: number | undefined): string {
         if (value == null) return '';

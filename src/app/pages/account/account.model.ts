@@ -4,6 +4,7 @@ export interface Account {
     name: string;
     initialBalance: number;
     currency: number;
+    currencyCode: string;
     importType: string;
     currentBalance: number;
     currentBalanceCzk: number;
