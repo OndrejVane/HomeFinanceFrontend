@@ -39,10 +39,8 @@ export class MovementService {
         return this.http.delete<void>(ApiEndpoints.Movement.byId(id));
     }
 
-    getMonthlyStats(year: number, month: number | null, type: string, accountId?: number): Observable<MovementMonthlyStatsResponse[]> {
-        return this.http.get<MovementMonthlyStatsResponse[]>(
-            ApiEndpoints.Movement.monthlyWithParams(year, month, type, accountId)
-        );
+    getMonthlyStats(year: number, month: number | null, type: string, accountId?: number | null): Observable<MovementMonthlyStatsResponse[]> {
+        return this.http.get<MovementMonthlyStatsResponse[]>(ApiEndpoints.Movement.monthlyWithParams(year, month, type, accountId));
     }
 
     getYearlyStats(year: number, accountId?: number | null): Observable<MovementYearlyStats[]> {

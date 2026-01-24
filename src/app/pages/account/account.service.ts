@@ -18,8 +18,12 @@ export class AccountService {
         return this.http.get<Account>(ApiEndpoints.Account.byId(id));
     }
 
-    getStats(id: number): Observable<AccountStatsResponse> {
-        return this.http.get<AccountStatsResponse>(ApiEndpoints.Account.stats(id));
+    getStats(account: Account | null): Observable<AccountStatsResponse> {
+        if (account == null) {
+            return this.http.get<AccountStatsResponse>(ApiEndpoints.Account.statsWithoutAccount());
+        } else {
+            return this.http.get<AccountStatsResponse>(ApiEndpoints.Account.stats(account.id));
+        }
     }
 
     getAll(): Observable<Account[]> {
@@ -47,7 +51,11 @@ export class AccountService {
         return this.http.post<ImportResult>(ApiEndpoints.Account.import(id), formData);
     }
 
-    getDailyBalance(accountId: number | string): Observable<DailyAccountStat[]> {
-        return this.http.get<DailyAccountStat[]>(ApiEndpoints.Account.dailyBalance(accountId));
+    getDailyBalance(accountId: number | null): Observable<DailyAccountStat[]> {
+        if (accountId == null) {
+            return this.http.get<DailyAccountStat[]>(ApiEndpoints.Account.dailyBalanceWithoutAccount());
+        } else {
+            return this.http.get<DailyAccountStat[]>(ApiEndpoints.Account.dailyBalance(accountId));
+        }
     }
 }

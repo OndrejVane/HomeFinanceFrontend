@@ -15,23 +15,23 @@ export const ApiEndpoints = {
         base: '/account',
         byId: (id: number | string) => `/account/${id}`,
         import: (id: number | string) => `/account/${id}/import`,
-        stats: (id: number | string) => `/account/${id}/stats`,
-        dailyBalance: (id: number | string) => `/account/${id}/daily-balance`
+        stats: (id: number | undefined) => `/account/${id}/stats`,
+        statsWithoutAccount: () => `/account/stats`,
+        dailyBalance: (id: number | string) => `/account/${id}/daily-balance`,
+        dailyBalanceWithoutAccount: () => `/account/daily-balance`
     },
 
     Movement: {
         base: '/movement',
         byId: (id: number | string) => `/movement/${id}`,
-        monthlyWithParams: (year: number, month: number | null, type: string, accountId?: number | string): string => {
+        monthlyWithParams: (year: number, month: number | null, type: string, accountId?: number | null): string => {
             let base = `/movement/stats/monthly?year=${encodeURIComponent(year)}&type=${encodeURIComponent(type)}`;
 
             if (month != null) {
                 base += `&month=${encodeURIComponent(month)}`;
             }
 
-            return accountId != null
-                ? `${base}&accountId=${encodeURIComponent(accountId)}`
-                : base;
+            return accountId != null ? `${base}&accountId=${encodeURIComponent(accountId)}` : base;
         },
         yearlyWithParams: (year: number, accountId?: number | null): string => {
             const base = `/movement/stats/yearly?year=${encodeURIComponent(year)}`;
@@ -41,6 +41,6 @@ export const ApiEndpoints = {
 
     MovementTag: {
         base: '/movement-tag',
-        byId: (id: number | string) => `/movement-tag/${id}`,
+        byId: (id: number | string) => `/movement-tag/${id}`
     }
 } as const;

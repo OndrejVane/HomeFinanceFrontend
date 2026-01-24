@@ -53,7 +53,7 @@ export class DailyBalanceChartComponent implements OnChanges, OnDestroy {
     constructor(private accountService: AccountService) {}
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['accountId'] && this.accountId != null) {
+        if (changes['accountId']) {
             this.loadData();
         }
     }
@@ -61,9 +61,6 @@ export class DailyBalanceChartComponent implements OnChanges, OnDestroy {
     private loadData(): void {
         if (this.sub) {
             this.sub.unsubscribe();
-        }
-        if (this.accountId == null) {
-            return;
         }
 
         this.loading = true;

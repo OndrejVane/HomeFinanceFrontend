@@ -80,7 +80,7 @@ import { MovementService } from '@/pages/account/movement.service';
     `
 })
 export class MonthlyStatsPieComponent implements OnInit {
-    @Input() accountId!: number;
+    @Input() accountId: number | null = null;
 
     years: number[] = [];
     months = [
@@ -120,10 +120,6 @@ export class MonthlyStatsPieComponent implements OnInit {
     }
 
     loadData(): void {
-        if (!this.accountId) {
-            return;
-        }
-
         this.loading = true;
 
         // Načteme náklady a výnosy paralelně
@@ -140,7 +136,7 @@ export class MonthlyStatsPieComponent implements OnInit {
                         this.chartDataIncome = this.buildChartData([]);
                         this.loading = false;
                     }
-                })
+                });
             },
             error: () => {
                 this.chartDataExpense = this.buildChartData([]);
