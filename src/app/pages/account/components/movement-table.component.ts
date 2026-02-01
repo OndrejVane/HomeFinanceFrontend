@@ -25,7 +25,7 @@ import { CzkCurrencyPipe } from '@/pages/currency/formaters/currency/cz-currency
     imports: [CommonModule, FormsModule, TableModule, InputTextModule, InputNumberModule, ButtonModule, Select, CzkCurrencyPipe, CzDateFormatter, Tag, ConfirmDialogModule, TranslateModule, AutoComplete],
     providers: [ConfirmationService, MessageService],
     template: `
-        <p-table [value]="movements" [lazy]="true" [lazyLoadOnInit]="true" [paginator]="true" [rows]="20"
+        <p-table [value]="movements" [lazy]="true" [lazyLoadOnInit]="true" [paginator]="true" [rows]="100"
                  [totalRecords]="totalRecords" [loading]="loading" dataKey="id" editMode="row"
                  (onLazyLoad)="loadMovements($event)">
             <ng-template pTemplate="header">
