@@ -7,12 +7,16 @@ import { MovementYearlyStats } from '@/pages/account/model/movement-yearly-stats
 import { MovementCreateRequest } from '@/pages/account/model/movement-request.model';
 import { MovementResponse } from '@/pages/account/model/movement-response.model';
 
-export interface Page<T> {
-    content: T[];
+export interface PageInfo {
+    size: number;
+    number: number;
     totalElements: number;
     totalPages: number;
-    number: number;
-    size: number;
+}
+
+export interface Page<T> {
+    content: T[];
+    page: PageInfo;
 }
 
 @Injectable({
